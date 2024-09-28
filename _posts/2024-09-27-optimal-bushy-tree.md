@@ -13,7 +13,7 @@ SELECT * FROM r1 JOIN  r2 JOIN r3 JOIN r4
 $$\Updownarrow$$
 $$R(a, b, c, d, e) = R_1(a, b), R_2(b, c), R_3(c, d), R_4(d, e)$$
 
-By regarding each relation, such as $R\_1(a, b)$, as a vertex and establishing an edge between vertices if they share some common variables, such a edge between $R_1(a, b), R_2(b, c)$, we find a graph representation of the query. The example above admits a chain of 4 vertices.
+By regarding each relation, such as <span>$R_1(a, b)$</span>, as a vertex and establishing an edge between vertices if they share some common variables, such a edge between $R_1(a, b), R_2(b, c)$, we find a graph representation of the query. The example above admits a chain of 4 vertices.
 
 $$R_1 - R_2 - R_3 - R_4$$
 
