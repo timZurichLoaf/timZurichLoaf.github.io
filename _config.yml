@@ -3,7 +3,7 @@ baseurl: "" # the subpath of your site, e.g. /blog
 title: "Tim - Zheng LUO" # the name of your site, e.g. ACME Corp.
 description: "luo at cs dot ucla dot edu"
 markdown: kramdown
-highlighter: blue
+highlighter: rouge
 kramdown:
   input: GFM
   syntax_highlighter_opts:
