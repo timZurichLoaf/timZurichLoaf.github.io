@@ -12,7 +12,7 @@ Consider a query with only natural joins such as the SQL query below,
 SELECT * FROM r1 JOIN  r2 JOIN r3 JOIN r4
 ```
 
-$\Updownarrow \quad R(a, b, c, d, e) = R_1(a, b), R_2(b, c), R_3(c, d), R_4(d, e)$$
+$\Leftrightarrow \quad R(a, b, c, d, e) = R_1(a, b), R_2(b, c), R_3(c, d), R_4(d, e)$
 
 By regarding each relation, such as $R_1(a, b)$, as a vertex and establishing an edge between vertices if they share some common variables, such a edge between $R_1(a, b), R_2(b, c)$, we find a graph representation of the query. The example above admits a chain of 4 vertices.
 
@@ -44,6 +44,7 @@ Now, the # of (sub-)query plans enumerated is exactly the # of **ccp**s enumerat
 
 The first algorithm $DPsize$ builds the following DP table in a bottom-up manner. Given the relations, it find the optimal 
 
+{:class="table table-bordered"}
 |                   	|               	|               	|           	|           	|           	|
 |-------------------	|---------------	|---------------	|-----------	|-----------	|-----------	|
 | $R_1,R_2,R_3,R_4$ 	|               	|               	|           	|           	|           	|
@@ -53,6 +54,7 @@ The first algorithm $DPsize$ builds the following DP table in a bottom-up manner
 
 The second algorithm $DPsub$ uses a bitvector of size $n$ to represent the queries contained in a subquery and builds the DP from left to right.
 
+{:class="table table-bordered"}
 | 0001  	| 0010  	| 0011       	| 0100  	| 0101           	| 0110       	| 0111            	| ... 	|
 |-------	|-------	|------------	|-------	|----------------	|------------	|-----------------	|-----	|
 | <span style="color:pink">$R_1$</span> 	| $R_2$ 	| <span style="color:pink">$R_1, R_2$</span> 	| <span style="color:pink">$R_3$</span> 	| ~~$R_1, R_3$~~ 	| <span style="color:pink">$R_2, R_3$</span> 	| <span style="color:red">$R_1, R_2, R_3$</span> 	| ... 	|
