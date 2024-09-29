@@ -12,11 +12,6 @@ Consider a query with only natural joins such as the SQL query below,
 SELECT * FROM r1 JOIN  r2 JOIN r3 JOIN r4
 ```
 
-```python
-def someFunc(x, y):
-    continue
-```
-
 $\Leftrightarrow \quad R(a, b, c, d, e) = R_1(a, b), R_2(b, c), R_3(c, d), R_4(d, e)$
 
 By regarding each relation, such as $R_1(a, b)$, as a vertex and establishing an edge between vertices if they share some common variables, such a edge between $R_1(a, b), R_2(b, c)$, we find a graph representation of the query. The example above admits a chain of 4 vertices.
