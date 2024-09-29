@@ -8,9 +8,9 @@ title: "Optimal Bushy Join Trees"
 Consider a query with only natural joins such as the SQL query below,
 
 
-```SQL
+{% highlight sql %}
 SELECT * FROM r1 JOIN  r2 JOIN r3 JOIN r4
-```
+{% endhighlight %}
 
 $\Leftrightarrow \quad R(a, b, c, d, e) = R_1(a, b), R_2(b, c), R_3(c, d), R_4(d, e)$
 
