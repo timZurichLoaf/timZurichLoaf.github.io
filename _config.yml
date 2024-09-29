@@ -2,5 +2,11 @@ url: "" # the base hostname & protocol for your site, e.g. http://example.com
 baseurl: "" # the subpath of your site, e.g. /blog
 title: "Tim - Zheng LUO" # the name of your site, e.g. ACME Corp.
 description: "luo at cs dot ucla dot edu"
-markdown: redcarpet
+markdown: kramdown
+highlighter: blue
+kramdown:
+  input: GFM
+  syntax_highlighter_opts:
+    default_lang: html
+    css_class   : 'syntax'
 

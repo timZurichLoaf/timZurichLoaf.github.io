@@ -91,7 +91,7 @@ When $DPccp$ explores $R_2$, while masking out $R_1$. Though visible at this mom
 
 $${\color{red}R_2} {\color{grey} - R_1 -} R_3 - R_4 \quad\quad \text{Output:}\, \{R_2\}$$
 
-Finally, $DPccp$ reaches $R_1$ with everything in the sight range. The neighborhoods are explored in recursive DFS fashion, resulting in an ascending order of their sizes.
+Finally, $DPccp$ reaches $R_1$ with everything in the sight range. The neighborhoods are explored in a depth-first fashion, resulting in an ascending order of their sizes.
 
 $$R_2 - {\color{red}R_1} - R_3 - R_4 \quad\quad \text{Output:}\, \{R_1\}, \{R_1, R_2\}, \{R_1, R_3\}, \{R_1, R_3, R_4\}$$
 
