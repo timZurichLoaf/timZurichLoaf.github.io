@@ -7,10 +7,11 @@ title: "Optimal Bushy Join Trees"
 
 Consider a query with only natural joins such as the SQL query below,
 
+<div align="center">
 ```SQL
 SELECT * FROM r1 JOIN  r2 JOIN r3 JOIN r4
 ```
-
+</div>
 
 $$\Updownarrow$$
 
