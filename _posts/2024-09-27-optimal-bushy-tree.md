@@ -65,7 +65,7 @@ $DPsize$ works better when the searching space is sparse, such as for chain quer
 
 ## Graph to Join Tree the New Way
 
-The authors propose a universal solution $DPccp$ superior to $DPsize$ and $DPsub$ by enumerating only the valid **ccp**s without iterating over the duplicates or cartesian products.
+The authors propose a universal solution $DPccp$ superior to $DPsize$ and $DPsub$ by enumerating only the valid **ccp**s without iterating over the duplicates or cartesian (cross) products.
 
 $DPccp$ requires a breath-first numbering of all vertices (relations) before it explores the neighborhood of each vertex following a descending order their BFS indices. The neighborhood of a vertex is limited to itself and the vertices with larger BFS indices.
 
@@ -96,7 +96,7 @@ Finally, $DPccp$ reaches $R_1$ with everything in the sight range. The neighborh
 $$R_2 - {\color{red}R_1} - R_3 - R_4 \quad\quad \text{Output:}\, \{R_1\}, \{R_1, R_2\}, \{R_1, R_3\}, \{R_1, R_3, R_4\}$$
 
 We may quickly notice two things that $DPccp$ does very well.
-1. No likes of $R'_2(a, b), R'_4(d, e)$ are enumerated. It checks only the **valid** **ccp**s. This more selective searching space sets it apart from $DPsize$ and $DPsub$;
-2. Each valid **ccp** is visited only once. No duplicates.
+- No cartesian (cross) products, such as $R'_2(a, b), R'_4(d, e)$, are enumerated. It checks only the **valid** **ccp**s. The more selective searching space sets it apart from $DPsize$ and $DPsub$;
+- Each valid **ccp** is visited only once. No duplicates.
 
 
