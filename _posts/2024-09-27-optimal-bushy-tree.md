@@ -47,8 +47,8 @@ The first algorithm $DPsize$ builds the following DP table in a bottom-up manner
 {:class="table table-bordered"}
 |               	|               	|               	|           	|           	|           	|
 |-------------------	|---------------	|---------------	|-----------	|-----------	|-----------	|
-| $$R_1,R_2,R_3,R_4$$ 	|               	|               	|           	|           	|           	|
-| $R_1,R_2,R_3$     	| <span style="color:red">$R_2,R_3,R_4$</span> 	| ~~$R_3,R_4,R_1$~~ 	|           	|           	|           	|
+| $R_1,R_2,R_3,R_4$ 	|               	|               	|           	|           	|           	|
+| $R_1,R_2,R_3$     	| <span style="color:red">$R_2,R_3,R_4$</span> 	| ~~$$R_3,R_4,R_1$$~~ 	|           	|           	|           	|
 | $R_1,R_2$         	| <span style="color:pink">$R_2,R_3$</span>     	| <span style="color:pink">$R_3,R_4$</span>     	| ~~$R_4,R_1$~~ 	| ~~$R_1,R_3$~~ 	| ~~$R_2,R_4$~~ 	|
 | $R_1$             	| <span style="color:pink">$R_2$</span>         	| <span style="color:pink">$R_3$</span>         	| $R_4$     	|           	|           	|
 
