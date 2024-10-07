@@ -93,7 +93,7 @@ $${\color{red}R_2} {\color{grey} - R_1 -} R_3 - R_4 \quad\quad \text{Output:}\, 
 
 Finally, $DPccp$ reaches $R_1$ with everything in the sight range. The neighborhoods are explored in a depth-first fashion, resulting in an ascending order of their sizes.
 
-$$R_2 - {\color{red}R_1} - R_3 - R_4 \quad\quad \text{Output:}\, \{R_1\}, \{R_1, R_2\}, \{R_1, R_3\}, \{R_1, R_3, R_4\}$$
+$$R_2 - {\color{red}R_1} - R_3 - R_4 \quad\quad \text{Output:}\, \{R_1\}, \{R_1, R_2\}, \{R_1, R_2, R_3\}, \{R_1, R_3\}, \{R_1, R_3, R_4\}$$
 
 We may quickly notice two things that $DPccp$ does very well.
 - No cartesian (cross) products, such as $R'_2(a, b), R'_4(d, e)$, are enumerated. It checks only the **valid** **ccp**s. The more selective searching space sets it apart from $DPsize$ and $DPsub$;
