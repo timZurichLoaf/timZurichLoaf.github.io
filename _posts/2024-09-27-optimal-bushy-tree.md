@@ -42,7 +42,7 @@ For example,
 
 Now, the # of (sub-)query plans enumerated is exactly the # of **ccp**s enumerated.
 
-The first algorithm $DPsize$ builds the following DP table in a bottom-up manner. Given the relations, it find the optimal 
+The first algorithm $DPsize$ builds the following DP table in a bottom-up manner. Given the relations, it find the optimal. The algo derives the optimal query plan of the sub-query highlighted in red, <span style="color:red">$R_2,R_3,R_4$</span>, by checking its sub-queries highlighted in pink below, such as <span style="color:pink">$R_3,R_4$</span> and <span style="color:pink">$R_2$</span>. The sub-queries in grey, like <span style="color:grey">$R_2,R_4$</span>, are not **csg**, for they are not connected. The algo avoids such cartesian products.
 
 {:class="table table-bordered"}
 |               	|               	|               	|           	|           	|           	|
