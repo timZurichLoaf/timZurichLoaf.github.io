@@ -49,7 +49,7 @@ The first algorithm $DPsize$ builds the following DP table in a bottom-up manner
 |-------------------	|---------------	|---------------	|-----------	|-----------	|-----------	|
 | $R_1,R_2,R_3,R_4$ 	|               	|               	|           	|           	|           	|
 | $R_1,R_2,R_3$     	| <span style="color:red">$R_2,R_3,R_4$</span> 	| <span style="color:grey">$R_3,R_4,R_1$</span> 	|           	|           	|           	|
-| $R_1,R_2$         	| <span style="color:pink">$R_2,R_3$</span>     	| <span style="color:pink">$R_3,R_4$</span>     	| <s>$R_4,R_1$</s> 	| ~~$R_1,R_3$~~ 	| <strike>$R_2,R_4$</strike> 	|
+| $R_1,R_2$         	| <span style="color:pink">$R_2,R_3$</span>     	| <span style="color:pink">$R_3,R_4$</span>     	| <span style="color:grey">$R_4,R_1$</span> 	| <span style="color:grey">$R_1,R_3$</span> 	| <span style="color:grey">$R_2,R_4$</span> 	|
 | $R_1$             	| <span style="color:pink">$R_2$</span>         	| $R_3$         	| <span style="color:pink">$R_4$</span>     	|           	|           	|
 
 The second algorithm $DPsub$ uses a bitvector of size $n$ to represent the queries contained in a subquery and builds the DP from left to right.
@@ -57,7 +57,7 @@ The second algorithm $DPsub$ uses a bitvector of size $n$ to represent the queri
 {:class="table table-bordered"}
 | 0001  	| 0010  	| 0011       	| 0100  	| 0101           	| 0110       	| 0111            	| ... 	|
 |-------	|-------	|------------	|-------	|----------------	|------------	|-----------------	|-----	|
-| <span style="color:pink">$R_1$</span> 	| $R_2$ 	| <span style="color:pink">$R_1, R_2$</span> 	| <span style="color:pink">$R_3$</span> 	| ~~$R_1, R_3$~~ 	| <span style="color:pink">$R_2, R_3$</span> 	| <span style="color:red">$R_1, R_2, R_3$</span> 	| ... 	|
+| <span style="color:pink">$R_1$</span> 	| $R_2$ 	| <span style="color:pink">$R_1, R_2$</span> 	| <span style="color:pink">$R_3$</span> 	| <span style="color:grey">$R_1, R_3$</span> 	| <span style="color:pink">$R_2, R_3$</span> 	| <span style="color:red">$R_1, R_2, R_3$</span> 	| ... 	|
 
 The authors conclude that $DPsub$ works better when the search space is dense, such as for clique queries, where most partitions of the graph tend to be connected, thus **csg**.
 
