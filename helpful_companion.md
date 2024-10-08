@@ -1,9 +1,8 @@
 ---
 layout: post
-title: "Helpful Companion"
+title: "2 Timothy 1:7"
 ---
 
-# 2 Timothy 1:7
-(English Standard Version)
+(ESV)
 
 for God gave us a spirit not of fear but of power and love and self-control.
