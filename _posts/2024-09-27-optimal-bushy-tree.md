@@ -63,7 +63,7 @@ The authors conclude that $DPsub$ works better when the search space is dense, s
 
 $DPsize$ works better when the searching space is sparse, such as for chain queries.
 
-## Graph to Join Tree the New Way
+## Graph to Join Tree the Neu Way
 
 The authors propose a universal solution $DPccp$ superior to $DPsize$ and $DPsub$ by enumerating only the valid **ccp**s without iterating over the duplicates or cartesian (cross) products.
 
