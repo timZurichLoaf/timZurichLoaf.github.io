@@ -13,4 +13,6 @@ title: "test gif"
 
 <img src="{{site.baseurl}}/assets/gif/chi.gif">
 
+<img src="{{site.baseurl}}/assets/gif/tarjan_yannakakis_eg.gif">
+
 
