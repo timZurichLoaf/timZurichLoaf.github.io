@@ -11,6 +11,6 @@ title: "test gif"
 
 ## local resource
 
-![](assets/gif/chi.gif)
+<img src="{{site.baseurl}}/assets/gif/chi.gif">
 
 
