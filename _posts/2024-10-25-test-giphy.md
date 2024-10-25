@@ -1,9 +1,9 @@
 ---
 layout: post
-title: "test giphy"
+title: "test gif"
 ---
 
-# test giphy
+# test gif
 
 ## online resource
 
@@ -11,6 +11,6 @@ title: "test giphy"
 
 ## local resource
 
-![chi](../assets/gif/chi.gif)
+![](assets/gif/chi.gif)
 
 
