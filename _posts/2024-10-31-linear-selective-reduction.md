@@ -21,7 +21,7 @@ where $a, d, g$ are *free variables* we'd like to see in the query result.
 All others are *bound variables*.
 We can derive a hypergraph as shown below from it by regarding each variable as a vertex and each relation as a hyperedge.
 <!-- ![hypergraph](../assets/img/20241031_selective_reduction/hypergraph.001.jpeg) -->
-<img src="{{site.baseurl}}/assets/img/20241031_selective_reduction/hypergraph.001.jpeg">
+<img style='height: 100%; width: 100%; object-fit: contain', src="{{site.baseurl}}/assets/img/20241031_selective_reduction/hypergraph.001.jpeg">
 
 Selective reduction gives $Q(a, d, g) = P(a, b), S(b, c), V(c, g), \Pi_{c,d}T, \Pi_{c, d}U, \Pi_{d}W$ as shown below.
 <!-- ![reduced_hypergraph](../assets/img/20241031_selective_reduction/reduced_hypergraph.001.jpeg) -->
