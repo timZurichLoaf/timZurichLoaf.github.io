@@ -3,7 +3,7 @@ layout: post
 title: "Linear-Time Selective Reduction"
 ---
 
-# Linear-Time Selective Reduction
+<!-- # Linear-Time Selective Reduction -->
 
 A query may contain many more relations and variables than what we want
 in the final result and also than the ones needed for join and aggregation.
