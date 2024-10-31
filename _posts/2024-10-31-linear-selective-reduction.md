@@ -69,12 +69,12 @@ $T(c, d, h)$, $V(c, g)$ and $U(c, d, e, f)$, all to 1.
 The largest, $U(c, d, e, f)$, is selected as $R(3)$.
 
 <!-- ![mcs2](../assets/gif/20241031_selective_reduction/max_card_search_2.gif) -->
-<img style='height: 100%; width: 100%; object-fit: contain' src="{{site.baseurl}}/assets/gif/20241031_selective_reduction/max_card_search_2.gif">
+<img style='height: 60%; width: 60%; object-fit: contain' src="{{site.baseurl}}/assets/gif/20241031_selective_reduction/max_card_search_2.gif">
 
 We repeat the above process until all vertices and edges are numbered as shown below.
 
 <!-- ![mcs3](../assets/gif/20241031_selective_reduction/max_card_search_3.gif) -->
-<img style='height: 100%; width: 100%; object-fit: contain' src="{{site.baseurl}}/assets/gif/20241031_selective_reduction/max_card_search_3.gif">
+<img style='height: 80%; width: 80%; object-fit: contain' src="{{site.baseurl}}/assets/gif/20241031_selective_reduction/max_card_search_3.gif">
 
 ## Repetitive Reduction
 
@@ -86,10 +86,10 @@ repeating the following 3-step procedure:
 
 In the 1st round shown below, we can immediately (1) delete $e, f \in R(3)$ and $i \in R(5)$, each appearing in exactly one edge. Then we shall (2) update the corresponding $|R(3)|$ and $|R(5)|$ to 2, to reflect their up-to-date cardinality after deletion. (3) While looking for $|R(i)| = |R'(i)|$ or $|R(i)| = |R'(i+1)|$, we find two candidates,
 
-- $|R(3)| = |R'(4)|$
-- $|R(5)| = |R'(5)|$
+<!-- - $|R(3)| = |R'(4)|$
+- $|R(5)| = |R'(5)|$ -->
 
-Let's delete them one by one following a descending order of time stamp, starting with $R(5)$. The deletion creates a void in the time stamp sequence, between $R(4)$ and $R(6)$, and may reduce $|R'(6)|$. In this case, $|R(5)| - |R'(5)| = 0$ says that every vertex in it has been numbered by its previous edges. So the deletion does not reduce $|R'(6)|$. To fill in the void, we decrement the time stamp of $R(6)$ by 1, making it the new $R(5)$. We repeat the same drill for $R(3)$. $|R(3)| - |R'(3)| = 1$ says that 1 vertex is numbered at time stamp $3$. Due to the void after the deletion, we shall give the credit of every vertex numbered at both time stamp $3$ and $4$ to $R(4)$. To fill the void again, we decrement $R(4)$, $R(5)$ to $R(3)$, $R(4)$. And there was deletion, and there was update - the 1st round.
+Let's delete them one by one following a descending order of time stamp, starting with $R(5)$. The deletion creates a void in the time stamp sequence, between $R(4)$ and $R(6)$, and may reduce $|R'(6)|$. In this case, $|R(5)| - |R'(5)| = 0$ says that every vertex in it has been numbered by its previous edges. So the deletion does not reduce $|R'(6)|$. To fill in the void, we decrement the time stamp of $R(6)$ by 1, making it the new $R(5)$. We repeat the same drill for $R(3)$. $|R(3)| - |R'(3)| = 1$ says that 1 vertex is numbered at time stamp 3. Due to the void after the deletion, we shall give the credit of every vertex numbered at both time stamp 3 and 4 to $R(4)$. To fill the void again, we decrement $R(4)$, $R(5)$ to $R(3)$, $R(4)$. And there was deletion, and there was update - the 1st round.
 
 <!-- ![sr1](../assets/gif/20241031_selective_reduction/selective_reduction_round1_.25speed.gif) -->
 <img style='height: 100%; width: 100%; object-fit: contain' src="{{site.baseurl}}/assets/gif/20241031_selective_reduction/selective_reduction_round1_.25speed.gif">
