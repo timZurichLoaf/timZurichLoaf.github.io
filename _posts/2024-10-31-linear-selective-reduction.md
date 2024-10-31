@@ -50,8 +50,8 @@ The numbering of $R(1)$ is done when all of its vertices have been checked.
 
 We take a quick pause after numbering each edge to calculate two 
 key measurements useful in the later reduction process.
-- $ |R(1)| = 2$ says there are 2 vertices in the 1st numbered edge.
-- $ |R(1)| = 0$ says that none of them has been numbered before the 1st edge is selected by us.
+- $\vert R(1) \vert = 2$ says there are 2 vertices in the 1st numbered edge.
+- $|R(1)| = 0$ says that none of them has been numbered before the 1st edge is selected by us.
 
 While numbering $R(1)$, we number the vertex $b$ that also appears in another edge $S(b, c)$.
 We increment the priority of $S(b, c)$ by 1. Notice that the numbering of each vertex might increase the priorities of multiple edges.
