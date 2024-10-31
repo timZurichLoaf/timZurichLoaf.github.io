@@ -20,8 +20,8 @@ Let's consider an acyclic query $Q(a, d, g) = P(a, b), S(b, c), T(c, d, h), U(c,
 where $a, d, g$ are *free variables* we'd like to see in the query result. 
 All others are *bound variables*.
 We can derive a hypergraph as shown below from it by regarding each variable as a vertex and each relation as a hyperedge.
-<!-- ![hypergraph](../assets/img/20241031_selective_reduction/hypergraph.001.jpeg) -->
-<img style='height: 100%; width: 100%; object-fit: contain', src="{{site.baseurl}}/assets/img/20241031_selective_reduction/hypergraph.001.jpeg">
+![hypergraph](../assets/img/20241031_selective_reduction/hypergraph.001.jpeg)
+<img style='height: 100%; width: 100%; object-fit: contain' src="{{site.baseurl}}/assets/img/20241031_selective_reduction/hypergraph.001.jpeg">
 
 Selective reduction gives $Q(a, d, g) = P(a, b), S(b, c), V(c, g), \Pi_{c,d}T, \Pi_{c, d}U, \Pi_{d}W$ as shown below.
 <!-- ![reduced_hypergraph](../assets/img/20241031_selective_reduction/reduced_hypergraph.001.jpeg) -->
@@ -84,7 +84,7 @@ repeating the following 3-step procedure:
 2. Update $|R(i)|$ accordingly
 3. Delete any $R(i)$ s.t. $|R(i)| = |R'(i)|$ or $|R(i)| = |R'(i+1)|$
 
-In the 1st round shown below, we can immediately (1) delete $e, f \in R(3)$ and $i \in R(5)$, each appearing in exactly one edge. Then we shall (2) update the corresponding $|R(3)| \gets 2$ and $|R(5)| \gets 2$ to reflect their up-to-date cardinality after deletion. (3) While looking for $|R(i)| = |R'(i)|$ or $|R(i)| = |R'(i+1)|$, we find two candidates,
+In the 1st round shown below, we can immediately (1) delete $e, f \in R(3)$ and $i \in R(5)$, each appearing in exactly one edge. Then we shall (2) update the corresponding $|R(3)| \leftarrow 2$ and $|R(5)| \leftarrow 2$ to reflect their up-to-date cardinality after deletion. (3) While looking for $|R(i)| = |R'(i)|$ or $|R(i)| = |R'(i+1)|$, we find two candidates,
 
 - $|R(3)| = |R'(4)|$
 - $|R(5)| = |R'(5)|$
