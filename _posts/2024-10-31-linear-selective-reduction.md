@@ -50,8 +50,8 @@ The numbering of $R(1)$ is done when all of its vertices have been checked.
 
 We take a quick pause after numbering each edge to calculate two 
 key measurements useful in the later reduction process.
-- $\vert R(1) \vert = 2$ says there are 2 vertices in the 1st numbered edge.
-- $|R(1)| = 0$ says that none of them has been numbered before the 1st edge is selected by us.
+- $ \vert R(1) \vert = 2$ says there are 2 vertices in the 1st numbered edge.
+- $ \vert R(1) \vert  = 0$ says that none of them has been numbered before the 1st edge is selected by us.
 
 While numbering $R(1)$, we number the vertex $b$ that also appears in another edge $S(b, c)$.
 We increment the priority of $S(b, c)$ by 1. Notice that the numbering of each vertex might increase the priorities of multiple edges.
@@ -81,24 +81,24 @@ We repeat the above process until all vertices and edges are numbered as shown b
 Given a fully numbered hypergraph by the Max Cardinality Search, we carry out the selective reduction by
 repeating the following 3-step procedure:
 1. Delete any *bound variable* that belongs to exactly one edge
-2. Update $|R(i)|$ accordingly
-3. Delete any $R(i)$ s.t. $|R(i)| = |R'(i)| \text{ or } |R(i)| = |R'(i+1)|$
+2. Update $ \vert R(i) \vert $ accordingly
+3. Delete any $R(i)$ s.t. $ \vert R(i) \vert  =  \vert R'(i) \vert  \text{ or }  \vert R(i) \vert  =  \vert R'(i+1) \vert $
 
 
 In the 1st round shown below, we can immediately (1) delete $e, f \in R(3)$ and $i \in R(5)$, each appearing in exactly one edge. Then we shall (2) update the corresponding 
-$|R(3)|$ and $|R(5)|$ to 2, to reflect their up-to-date cardinality after deletion. (3) While looking for $|R(i)| = |R'(i)| \text{ or } |R(i)| = |R'(i+1)|$, we find two candidates,
+$ \vert R(3) \vert $ and $ \vert R(5) \vert $ to 2, to reflect their up-to-date cardinality after deletion. (3) While looking for $ \vert R(i) \vert  =  \vert R'(i) \vert  \text{ or }  \vert R(i) \vert  =  \vert R'(i+1) \vert $, we find two candidates,
 
 
-- $|R(3)| = |R'(4)|$
-- $|R(5)| = |R'(5)|$
+- $ \vert R(3) \vert  =  \vert R'(4) \vert $
+- $ \vert R(5) \vert  =  \vert R'(5) \vert $
 
-Let's delete them one by one following a descending order of time stamp, starting with $R(5)$. The deletion creates a void in the time stamp sequence, between $R(4)$ and $R(6)$, and may reduce $|R'(6)|$. In this case, $|R(5)| - |R'(5)| = 0$ says that every vertex in it has been numbered by its previous edges. So the deletion does not reduce $|R'(6)|$. To fill in the void, we decrement the time stamp of $R(6)$ by 1, making it the new $R(5)$. We repeat the same drill for $R(3)$. $|R(3)| - |R'(3)| = 1$ says that 1 vertex is numbered at time stamp 3. Due to the void after the deletion, we shall give the credit of every vertex numbered at both time stamp 3 and 4 to $R(4)$. To fill the void again, we decrement $R(4)$, $R(5)$ to $R(3)$, $R(4)$. And there was deletion, and there was update - the 1st round.
+Let's delete them one by one following a descending order of time stamp, starting with $R(5)$. The deletion creates a void in the time stamp sequence, between $R(4)$ and $R(6)$, and may reduce $ \vert R'(6) \vert $. In this case, $ \vert R(5) \vert  -  \vert R'(5) \vert  = 0$ says that every vertex in it has been numbered by its previous edges. So the deletion does not reduce $ \vert R'(6) \vert $. To fill in the void, we decrement the time stamp of $R(6)$ by 1, making it the new $R(5)$. We repeat the same drill for $R(3)$. $ \vert R(3) \vert  -  \vert R'(3) \vert  = 1$ says that 1 vertex is numbered at time stamp 3. Due to the void after the deletion, we shall give the credit of every vertex numbered at both time stamp 3 and 4 to $R(4)$. To fill the void again, we decrement $R(4)$, $R(5)$ to $R(3)$, $R(4)$. And there was deletion, and there was update - the 1st round.
 
 <!-- ![sr1](../assets/gif/20241031_selective_reduction/selective_reduction_round1_.25speed.gif) -->
 <img style='height: 100%; width: 100%; object-fit: contain' src="{{site.baseurl}}/assets/gif/20241031_selective_reduction/selective_reduction_round1_.25speed.gif">
 
 We repeat the 3-step process in the 2nd round shown below and stop before going very far, as we can only (1) delete $h \in R(3)$ and (2) update $R(3)$. No edge satisfies the condition 
-$|R(i)| = |R'(i)| \text{ or } |R(i)| = |R'(i+1)|$. And there was deletion, and there was update - the 2nd round. As we can't proceed any further, we conclude the selective reduction process here.
+$ \vert R(i) \vert  =  \vert R'(i) \vert  \text{ or }  \vert R(i) \vert  =  \vert R'(i+1) \vert $. And there was deletion, and there was update - the 2nd round. As we can't proceed any further, we conclude the selective reduction process here.
 
 <!-- ![sr2](../assets/gif/20241031_selective_reduction/selective_reduction_round2_.25speed.gif) -->
 <img style='height: 100%; width: 100%; object-fit: contain' src="{{site.baseurl}}/assets/gif/20241031_selective_reduction/selective_reduction_round2_.25speed.gif">
