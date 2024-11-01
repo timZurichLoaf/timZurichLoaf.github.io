@@ -56,7 +56,7 @@ key measurements useful in the later reduction process.
 While numbering $R(1)$, we number the vertex $b$ that also appears in another edge $S(b, c)$.
 We increment the priority of $S(b, c)$ by 1. Notice that the numbering of each vertex might increase the priorities of multiple edges.
 
-We proceed to number the edge with the highest priority, $R(2).
+We proceed to number the edge with the highest priority, $R(2)$.
 
 <!-- ![mcs1](../assets/gif/20241031_selective_reduction/max_card_search_1.gif) -->
 <img style='height: 100%; width: 100%; object-fit: contain' src="{{site.baseurl}}/assets/gif/20241031_selective_reduction/max_card_search_1.gif">
@@ -75,6 +75,8 @@ We repeat the above process until all vertices and edges are numbered as shown b
 
 <!-- ![mcs3](../assets/gif/20241031_selective_reduction/max_card_search_3.gif) -->
 <img style='height: 100%; width: 100%; object-fit: contain' src="{{site.baseurl}}/assets/gif/20241031_selective_reduction/max_card_search_3.gif">
+
+As each vertex is numbered exactly once, and so is each edge, the complexity of MCS is $O(n + m)$. The cardinality-based tie breaker may add a factor $log(m)$ to it.
 
 ## Repetitive Reduction
 
@@ -107,3 +109,7 @@ By putting back all the relations (edges) which can be projected onto the existi
 
 <!-- ![reduced](../assets/gif/20241031_selective_reduction/selectively_reduced.gif) -->
 <img style='height: 100%; width: 100%; object-fit: contain' src="{{site.baseurl}}/assets/gif/20241031_selective_reduction/selectively_reduced.gif">
+
+The numbered edges expedite the check of the edges subsumed by others, bringing down the complexity from $O(m^2)$ to $O(m)$.
+
+The check of vertices belonging to exactly one edge requires at least the maintenance of a min-heap sorting vertices by the number of edges they appear, therefore adding another factor of $O(log(n))$.
