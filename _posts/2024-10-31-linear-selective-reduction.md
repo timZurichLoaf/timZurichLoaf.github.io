@@ -40,7 +40,7 @@ and simultaneously number the hyperedges in an ascending order.
 The animated figure below shows the very beginning of an MCS, which starts by picking a free variable, say $a$, 
 and considers the hyperedge containing it as the 'selected' edge at the moment. 
 So the edge $P(a, b)$ is numbered as the 1st edge, $R(1)$, and $a$ is assigned the largest number equivalent to the number of vertices, 9. At any point of the process, $i$ in the parenthese of $R(i)$ can be interpreted as 
-the 'time stamp' of when an edge is selected. The smaller, the earlier.
+the 'timestamp' of when an edge is selected. The smaller, the earlier.
 
 MCS proceeds to number all vertices in the selected hyperedge. Here, $b$ is numbered 8. 
 For we only need the numbering of edges in the end, the order of vertex numbers in an edge does not really matter. 
@@ -94,13 +94,15 @@ $ \vert R(3) \vert $ and $ \vert R(5) \vert $ to 2, to reflect their up-to-date 
 - $ \vert R(3) \vert  =  \vert R'(4) \vert $
 - $ \vert R(5) \vert  =  \vert R'(5) \vert $
 
-Let's delete them one by one following a descending order of time stamp, starting with $R(5)$. The deletion creates a void in the time stamp sequence, between $R(4)$ and $R(6)$, and may reduce $ \vert R'(6) \vert $. In this case, $ \vert R(5) \vert  -  \vert R'(5) \vert  = 0$ says that every vertex in it has been numbered by its previous edges. So the deletion does not reduce $ \vert R'(6) \vert $. To fill in the void, we decrement the time stamp of $R(6)$ by 1, making it the new $R(5)$. We repeat the same drill for $R(3)$. $ \vert R(3) \vert  -  \vert R'(3) \vert  = 1$ says that 1 vertex is numbered at time stamp 3. Due to the void after the deletion, we shall give the credit of every vertex numbered at both time stamp 3 and 4 to $R(4)$. To fill the void again, we decrement $R(4)$, $R(5)$ to $R(3)$, $R(4)$. And there was deletion, and there was update - the 1st round.
+Let's delete them one by one following a descending order of timestamp, starting with $R(5)$. The deletion creates a void in the timestamp sequence, between $R(4)$ and $R(6)$, and may reduce $ \vert R'(6) \vert $. In this case, $ \vert R(5) \vert  -  \vert R'(5) \vert  = 0$ says that every vertex in it has been numbered by its previous edges. So the deletion does not reduce $ \vert R'(6) \vert $. To fill in the void, we decrement the timestamp of $R(6)$ by 1, making it the new $R(5)$. We repeat the same drill for $R(3)$. $ \vert R(3) \vert  -  \vert R'(3) \vert  = 1$ says that 1 vertex is numbered at timestamp 3. Due to the void after the deletion, we shall give the credit of every vertex numbered at both timestamp 3 and 4 to $R(4)$. To fill the void again, we decrement $R(4)$, $R(5)$ to $R(3)$, $R(4)$. And there was deletion, and there was update - the 1st round.
 
 <!-- ![sr1](../assets/gif/20241031_selective_reduction/selective_reduction_round1_.25speed.gif) -->
 <img style='height: 100%; width: 100%; object-fit: contain' src="{{site.baseurl}}/assets/gif/20241031_selective_reduction/selective_reduction_round1_.25speed.gif">
 
 We repeat the 3-step process in the 2nd round shown below and stop before going very far, as we can only (1) delete $h \in R(3)$ and (2) update $R(3)$. No edge satisfies the condition 
-$ \vert R(i) \vert  =  \vert R'(i) \vert  \text{ or }  \vert R(i) \vert  =  \vert R'(i+1) \vert $. And there was deletion, and there was update - the 2nd round. As we can't proceed any further, we conclude the selective reduction process here.
+$ \vert R(i) \vert  =  \vert R'(i) \vert  \text{ or }  \vert R(i) \vert  =  \vert R'(i+1) \vert $. And there was deletion, and there was update - the 2nd round. 
+
+As we can't proceed any further, we wrap up the reduction.
 
 <!-- ![sr2](../assets/gif/20241031_selective_reduction/selective_reduction_round2_.25speed.gif) -->
 <img style='height: 100%; width: 100%; object-fit: contain' src="{{site.baseurl}}/assets/gif/20241031_selective_reduction/selective_reduction_round2_.25speed.gif">
@@ -112,4 +114,4 @@ By putting back all the relations (edges) which can be projected onto the existi
 
 The numbered edges expedite the check of the edges subsumed by others, bringing down the complexity from $O(m^2)$ to $O(m)$.
 
-The check of vertices belonging to exactly one edge requires at least the maintenance of a min-heap sorting vertices by the number of edges they appear, therefore adding another factor of $O(log(n))$.
+The check of vertices belonging to exactly one edge requires at least the maintenance of a min-heap sorting vertices by the number of edges they appear, therefore adding another factor of $log(n)$.
