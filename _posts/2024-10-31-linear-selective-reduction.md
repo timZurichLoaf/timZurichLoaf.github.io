@@ -71,6 +71,14 @@ We proceed to number the edge with the highest priority, $R(2)$.
 
 <!-- ![mcs1](../assets/gif/20241031_selective_reduction/max_card_search_1.gif) -->
 <img style='height: 100%; width: 100%; object-fit: contain' src="{{site.baseurl}}/assets/gif/20241031_selective_reduction/max_card_search_1.gif">
+<style>
+.responsive-wrap iframe{ max-width: 100%;}
+</style>
+<div class="responsive-wrap">
+<!-- this is the embed code provided by Google -->
+  <iframe src="https://docs.google.com/presentation/d/e/2PACX-1vS-J3d94J4msqAlc2scJlFV-IC-ke1tJM9jwHE3luHSXFVyJI49ZAIZpOoqj8Q0yx3OVVBpJunBue3w/embed?start=false&loop=false&delayms=10000" frameborder="0" width="2560" height="1469" allowfullscreen="true" mozallowfullscreen="true" webkitallowfullscreen="true"></iframe>
+<!-- Google embed ends -->
+</div>
 
 In case that two or more edges have the highest priority, we break ties by cardinality (largest edge preferred).
 As we can see in the animated figure below, 
