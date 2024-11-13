@@ -70,9 +70,10 @@ While numbering $R(1)$, we number the vertex $b$ that also appears in another ed
 We proceed to number the edge with the highest priority, $R(2)$.
 
 <!-- ![mcs1](../assets/gif/20241031_selective_reduction/max_card_search_1.gif) -->
-<img style='height: 100%; width: 100%; object-fit: contain' src="{{site.baseurl}}/assets/gif/20241031_selective_reduction/max_card_search_1.gif">
+<!-- <img style='height: 100%; width: 100%; object-fit: contain' src="{{site.baseurl}}/assets/gif/20241031_selective_reduction/max_card_search_1.gif"> -->
+
 <style>
-.responsive-wrap iframe{ max-width: 100%;}
+.responsive-wrap iframe{ max-width: 100%; max-height: 50%;}
 </style>
 <div class="responsive-wrap">
 <!-- this is the embed code provided by Google -->
