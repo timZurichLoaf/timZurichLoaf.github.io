@@ -73,8 +73,7 @@ We proceed to number the edge with the highest priority, $R(2)$.
 <!-- <img style='height: 100%; width: 100%; object-fit: contain' src="{{site.baseurl}}/assets/gif/20241031_selective_reduction/max_card_search_1.gif"> -->
 
 <style>
-/* .responsive-wrap iframe{ max-width: 100%;} */
-.responsive-wrap iframe{style="position: relative; padding-bottom: 59.27%; height: 0; overflow: hidden; max-width: 100%;}
+.responsive-wrap iframe{aspect-ratio: 16 / 9; max-width: 100%;}
 </style>
 <div class="responsive-wrap">
 <!-- this is the embed code provided by Google -->
