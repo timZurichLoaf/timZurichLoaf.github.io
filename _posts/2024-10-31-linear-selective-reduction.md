@@ -77,7 +77,7 @@ We proceed to number the edge with the highest priority, $R(2)$.
 </style>
 <div class="responsive-wrap">
 <!-- this is the embed code provided by Google -->
-  <iframe src="https://docs.google.com/presentation/d/e/2PACX-1vS-J3d94J4msqAlc2scJlFV-IC-ke1tJM9jwHE3luHSXFVyJI49ZAIZpOoqj8Q0yx3OVVBpJunBue3w/embed?start=false&loop=false&delayms=10000" frameborder="0" width="2560" allowfullscreen="true" mozallowfullscreen="true" webkitallowfullscreen="true"></iframe>
+  <iframe src="https://docs.google.com/presentation/d/e/2PACX-1vRJYTku1dP2jawietOu2UQwvwc8gBpNi4NDX2DyPRhEScHjxZH76Cc8jqk-qAY-RuHQC9TKJt3xQf6U/embed?start=false&loop=false&delayms=60000" frameborder="0" width="1440" allowfullscreen="true" mozallowfullscreen="true" webkitallowfullscreen="true"></iframe>
 <!-- Google embed ends -->
 </div>
 
@@ -89,14 +89,32 @@ The largest, $U(c, d, e, f)$, is selected as $R(3)$.
 
 
 <!-- ![mcs2](../assets/gif/20241031_selective_reduction/max_card_search_2.gif) -->
-<img style='height: 100%; width: 100%; object-fit: contain' src="{{site.baseurl}}/assets/gif/20241031_selective_reduction/max_card_search_2.gif">
+<!-- <img style='height: 100%; width: 100%; object-fit: contain' src="{{site.baseurl}}/assets/gif/20241031_selective_reduction/max_card_search_2.gif"> -->
+
+<style>
+.responsive-wrap iframe{aspect-ratio: 16 / 9; max-width: 100%;}
+</style>
+<div class="responsive-wrap">
+<!-- this is the embed code provided by Google -->
+  <iframe src="https://docs.google.com/presentation/d/e/2PACX-1vQKWHjB0CgvvivuoNG1VIL1CfNvaOGigL6JfmSLOpgYt5HC1JPS5x40JKIw0snCyeFlOgDCHSeQV5GX/embed?start=false&loop=false&delayms=60000" frameborder="0" width="1440" allowfullscreen="true" mozallowfullscreen="true" webkitallowfullscreen="true"></iframe>
+<!-- Google embed ends -->
+</div>
 
 
 We repeat the above process until all vertices and edges are numbered as shown below.
 
 
 <!-- ![mcs3](../assets/gif/20241031_selective_reduction/max_card_search_3.gif) -->
-<img style='height: 100%; width: 100%; object-fit: contain' src="{{site.baseurl}}/assets/gif/20241031_selective_reduction/max_card_search_3.gif">
+<!-- <img style='height: 100%; width: 100%; object-fit: contain' src="{{site.baseurl}}/assets/gif/20241031_selective_reduction/max_card_search_3.gif"> -->
+
+<style>
+.responsive-wrap iframe{aspect-ratio: 16 / 9; max-width: 100%;}
+</style>
+<div class="responsive-wrap">
+<!-- this is the embed code provided by Google -->
+  <iframe src="https://docs.google.com/presentation/d/e/2PACX-1vQlY2VKCHEHNQGrGXdM7RWDZ7qCa8SPb_m16BeApoG1JL8FQg29dpP4CMoLv5qMuhx40oMEO5oLV5P4/embed?start=false&loop=false&delayms=60000" frameborder="0" width="1440" allowfullscreen="true" mozallowfullscreen="true" webkitallowfullscreen="true"></iframe>
+<!-- Google embed ends -->
+</div>
 
 
 As each vertex is numbered exactly once, and so is each edge, the time complexity of MCS is $O(n + m)$. The cardinality-based tie breaker may add a factor $log(m)$ to it.
@@ -129,7 +147,16 @@ Due to the deletion, we shall associate $R(4)$ with every vertex numbered at bot
 The 1st round is over.
 
 <!-- ![sr1](../assets/gif/20241031_selective_reduction/selective_reduction_round1_.25speed.gif) -->
-<img style='height: 100%; width: 100%; object-fit: contain' src="{{site.baseurl}}/assets/gif/20241031_selective_reduction/selective_reduction_round1_.25speed.gif">
+<!-- <img style='height: 100%; width: 100%; object-fit: contain' src="{{site.baseurl}}/assets/gif/20241031_selective_reduction/selective_reduction_round1_.25speed.gif"> -->
+
+<style>
+.responsive-wrap iframe{aspect-ratio: 16 / 9; max-width: 100%;}
+</style>
+<div class="responsive-wrap">
+<!-- this is the embed code provided by Google -->
+  <iframe src="https://docs.google.com/presentation/d/e/2PACX-1vRngPD4Ga4aCKUZFLSe1_bJVE1V7LoPnq8h51q0Fgh3OPgUhSx5zt9wdEOU8nYWIHxgJnhBjsUkxOC_/embed?start=false&loop=false&delayms=60000" frameborder="0" width="1440" allowfullscreen="true" mozallowfullscreen="true" webkitallowfullscreen="true"></iframe>
+<!-- Google embed ends -->
+</div>
 
 We repeat the 3-step process in the 2nd round shown below. We can only (1) delete $h \in R(3)$ and (2) update $R(3)$, as no edge satisfies the condition 
 $ \vert R(i) \vert  =  \vert R'(i) \vert  \text{ or }  \vert R(i) \vert  =  \vert R'(i+1) \vert $. 
@@ -140,7 +167,16 @@ As we can't proceed any further, we wrap up the reduction.
 
 
 <!-- ![sr2](../assets/gif/20241031_selective_reduction/selective_reduction_round2_.25speed.gif) -->
-<img style='height: 100%; width: 100%; object-fit: contain' src="{{site.baseurl}}/assets/gif/20241031_selective_reduction/selective_reduction_round2_.25speed.gif">
+<!-- <img style='height: 100%; width: 100%; object-fit: contain' src="{{site.baseurl}}/assets/gif/20241031_selective_reduction/selective_reduction_round2_.25speed.gif"> -->
+
+<style>
+.responsive-wrap iframe{aspect-ratio: 16 / 9; max-width: 100%;}
+</style>
+<div class="responsive-wrap">
+<!-- this is the embed code provided by Google -->
+  <iframe src="https://docs.google.com/presentation/d/e/2PACX-1vQoqd8v6ct_8Sw1uDuq_KmRMSZ8c3BNPaVWDKNVHsU1viXaRK0rRBPbvHGmRakreVv8Fv8wuBbXxZW6/embed?start=false&loop=false&delayms=60000" frameborder="0" width="1440" allowfullscreen="true" mozallowfullscreen="true" webkitallowfullscreen="true"></iframe>
+<!-- Google embed ends -->
+</div>
 
 By putting back all the relations (edges) which can be projected onto the existing variables (vertices), we have the selectively reduced query.
 
