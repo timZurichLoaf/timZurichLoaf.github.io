@@ -5,3 +5,4 @@
 _site
 Gemfile.lock
 .archive_posts
+.DS_Store
