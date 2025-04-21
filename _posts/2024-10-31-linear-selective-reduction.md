@@ -3,6 +3,7 @@ layout: post
 title: "Linear-Time Selective Reduction"
 ---
 
+<!-- 2024-10-31-linear-selective-reduction -->
 <!-- # Linear-Time Selective Reduction -->
 
 A query may contain many more relations and variables than both what we want to see
