@@ -83,7 +83,7 @@ $DPccp$ first the neighborhood of the vertex with the largest BF number, namely 
 
 $${\color{grey}R_2 - R_1 - R_3 - } {\color{red}R_4} \quad\quad \text{Output:}\, \{R_4\}$$
 
-$DPccp$ moves on to explore $R_3$, while masking out $R_1, R_2$. In addition to the singleton set \{R_3\}, it also ouputs an $R_3$'s neighborhood $\{R_3, R_4\}$.
+$DPccp$ moves on to explore $R_3$, while masking out $R_1, R_2$. In addition to the singleton set $\{R_3\}$, it also ouputs an $R_3$'s neighborhood $\{R_3, R_4\}$.
 
 $${\color{grey}R_2 - R_1 -} {\color{red}R_3} - R_4 \quad\quad \text{Output:}\, \{R_3\}, \{R_3, R_4\}$$
 
