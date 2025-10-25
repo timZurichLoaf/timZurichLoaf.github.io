@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Spanning Tree Enuemration"
+title: "Spanning Tree Enumeration"
 ---
 
 <!-- 2025-04-21-spanning-tree-enum -->
