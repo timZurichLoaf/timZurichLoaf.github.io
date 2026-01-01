@@ -3,12 +3,12 @@ featured:
 # - {name: 'Tractable Conjunctive Queries over Static and Dynamic Relations. Kara, Ahmet and Luo, Zheng and Nikolic, Milos and Olteanu, Dan and Zhang, Haozhe. In 28th International Conference on Database Theory.', url: 'https://drops.dagstuhl.de/storage/00lipics/lipics-vol328-icdt2025/LIPIcs.ICDT.2025.12/LIPIcs.ICDT.2025.12.pdf'}
 - {
   name: 'Algorithms for Optimizing Acyclic Queries', 
-  authors : '**Luo, Zheng**, Van den Broeck, Wim, Van den Broeck, Guy and Wang, Yisu Remy', 
+  authors : '<strong>Luo, Zheng</strong>, Van den Broeck, Wim, Van den Broeck, Guy and Wang, Yisu Remy', 
   venue : '29th International Conference on Database Theory (ICDT2026), Tampere, Finland', 
   url: 'https://arxiv.org/pdf/2509.14144'}
 - {
   name: 'Tractable Conjunctive Queries over Static and Dynamic Relations',
-  authors : 'Kara, Ahmet and **Luo, Zheng** and Nikolic, Milos and Olteanu, Dan and Zhang, Haozhe',
+  authors : 'Kara, Ahmet and <strong>Luo, Zheng</strong> and Nikolic, Milos and Olteanu, Dan and Zhang, Haozhe',
   venue: '28th International Conference on Database Theory (ICDT2025), Barcelona, Spain',
   url: 'https://drops.dagstuhl.de/storage/00lipics/lipics-vol328-icdt2025/LIPIcs.ICDT.2025.12/LIPIcs.ICDT.2025.12.pdf'}
 
