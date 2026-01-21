@@ -120,7 +120,7 @@ For example, we want to join the following three table $R(A, B) \bowtie S(B, C) 
     <tr><td>1</td><td>1</td></tr>
     <tr><td>1</td><td>2</td></tr>
     <tr><td><span style="color:red">1</span></td><td><span style="color:red">3</span></td></tr>
-    <tr><td>1</td><td>4</span></td></tr>
+    <tr><td>1</td><td>4</td></tr>
   </tbody>
 </table>
 <!--  -->
