@@ -18,13 +18,13 @@ layout: default
   <div class="col-md-12">
     <h3 class="fw-bold border-bottom pb-3 mb-5">Posts</h3>
     {% for post in site.posts %}
-      {% assign prefix = post.slug | slice: 0, 9 %}
-      {% unless prefix == "invisible" %}
+      {% assign prefix = post.title | slice: 0, 9 %}
+      {% if prefix == "[visible]" %}
         <p>
           <a href="{{ site.github.url }}/{{ post.url }}">{{ post.title }}</a>
           - {{ post.date | date: "%B %-d, %Y" }}
         </p>
-      {% endunless %}
+      {% endif %}
     {% endfor %}
   </div>
 </div>

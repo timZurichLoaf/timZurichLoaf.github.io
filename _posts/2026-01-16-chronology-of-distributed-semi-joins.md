@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "(Selective) Chronology of Distributed Semi-Joins"
+title: "[invisible] Chronology of Distributed Semi-Joins"
 ---
 
 ## Probabilistic Filter for Membership Queries (1970) 
