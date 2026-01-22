@@ -13,7 +13,7 @@ $$h_1(x) = x \bmod 10; h_2(x) = (x + 4) \bmod 10.$$
 
 Initially, all the bits are set to $0$, meaning no element has been inserted yet.
 
-{:class="table table-bordered"}
+{:class="table table-bordered table-hover table-sm"}
 | Index | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 |
 |------:|---|---|---|---|---|---|---|---|---|---|
 | Bit   | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
