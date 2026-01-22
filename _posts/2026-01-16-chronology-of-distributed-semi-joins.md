@@ -62,15 +62,15 @@ to $1$ by the insertions of some other elements.
 The time & space efficiency of Bloom Filter comes at the cost of accuracy. 
 Hash collisions may result in <span style="color:red">false positives</span>.
 
-### The bigger false-positive rate $P_e$, the more compact filter
+***Increasing the filter size reduces the false positive rate.***
 
 In an array of $m$ bits,
 a hash function supposedly maps uniformly to one of the $m$ bits.
 So it sets a bit to $1$ with a probability of $P_{1} = \frac{1}{m}$
-and leaves a bit to $0$ with $P_{0} = 1 - \frac{1}{m}$.
+and leaves a bit unchanged with $P_{0} = 1 - \frac{1}{m}$.
 
-For a Bloom filter with $k$ hash functions, the hash functions are indepedent.
-After inserting an element, the probability of some bit remains $0$ is
+Assuming $k$ independent hash functions of a Bloom filter,
+the probability of some bit remains $0$ after inserting an element is
 
 $$P_{0}^k = (1 - \frac{1}{m})^k.$$
 
@@ -78,18 +78,23 @@ After inserting all $n$ elements, the probability of some bit remains $0$ is
 
 $$P_{0}^{k \cdot n} = (1 - \frac{1}{m})^{k \cdot n}.$$
 
-Then the probability of a bit being set is
+Then the probability of a bit being set to $1$ is
 
 $$P_{set} = 1 - P_{0}^{k \cdot n} = 1 - (1 - \frac{1}{m})^{k \cdot n}.$$
 
-The query of an element that's never been inserted returns **false positives**
-if any of the $k$ bits
+The query of an element that's never been inserted returns **false positives** if any of the $k$ bits it's hashed to has
+been set to $1$. It gives us the **false-positive** rate, a.k.a.
+the **error** rate,
 
+$$P_e = P_{set}^k = [1 - (1 - \frac{1}{m})^{k\cdot n}]^{k}.$$
 
+With the exponential approximation $\lim_{m \to \infty}(1 - \frac{1}{m})^m = e^{-m}$, 
+we have
 
-For a Bloom filter with $k$ hash functions with $n$ elements inserted, the possibility of seeing such a false positive is
+$$P_e \approx [1 - e^\frac{-k\cdot n}{m}]^{k}.$$
 
-$$P_e = [1 - (1 - \frac{1}{m})^{k\cdot n}]^{k}.$$
+Given the number of elements $n$ and that of hash functions $k$,
+increasing the filter size $m$ reduces the false positive rate $P_e$.
 
 
 ## Exact Semi-joins (1981)
@@ -174,9 +179,85 @@ Now the questions are
 
 The very purpose of semi-joins is to prune the tables.
 If we don't need to filter out **every** irrelevant tuple, 
-[J.K. Mullin](https://ieeexplore.ieee.org/document/52778) finds [Bloom Filter](https://dl.acm.org/doi/10.1145/362686.362692) an answer to the first question. Bloom Filters are easy to compute and compact, so cheap to transmit over a network in a distributed database. 
-It only gives **false positives** when a membership is queried, 
+[J.K. Mullin](https://ieeexplore.ieee.org/document/52778) finds [Bloom Filter](https://dl.acm.org/doi/10.1145/362686.362692) an answer to the first question. Bloom Filters are easy to compute and compact, therefore cheap to transmit over the network in a distributed database. 
+It only gives **false positives** for membership queries, 
 so it doesn't prune too hard to exclude any legit tuple from the final join result.
+
+For the 3-table join above, if we were using a Bloom Filter built on $T(C)$ 
+to filter out **some** irrelevant tuples from $S(B, C)$ but leaving
+a false-positive $\color{orange}(1, 4)$, the query results would remain correct.
+
+<div style="text-align: center;">
+<table style="display:inline-block; margin-right:40px; vertical-align:top; text-align:center;">
+  <thead>
+    <tr>
+      <th colspan="2">R(A, B)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><span style="color:red">1</span></td><td><span style="color:red">1</span></td></tr>
+    <tr><td><span style="color:red">2</span></td><td><span style="color:red">1</span></td></tr>
+    <tr><td>3</td><td>2</td></tr>
+    <tr><td>4</td><td>2</td></tr>
+  </tbody>
+</table>
+<!--  -->
+<table style="display:inline-block; margin-right:40px; vertical-align:top; text-align:center;">
+  <thead>
+    <tr>
+      <th colspan="2">S(B, C)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td>1</td><td>1</td></tr>
+    <tr><td>1</td><td>2</td></tr>
+    <tr><td><span style="color:red">1</span></td><td><span style="color:red">3</span></td></tr>
+    <tr><td><span style="color:orange">1</span></td><td><span style="color:orange">4</span></td></tr>
+  </tbody>
+</table>
+<!--  -->
+<table style="display:inline-block; vertical-align:top; text-align:center;">
+  <tr><th>T(C)</th></tr>
+  <tr><td><span style="color:red">3</span></td></tr>
+</table>
+</div>
+
+***Using $k$ filters of size $\frac{m}{k}$ instead of one filter of size $m$***
+
+Recall that the error rate of a Bloom Filter of size $m$ with $k$ hash functions 
+and $n$ elements inserted is
+
+$$P_e = [1 - (1 - \frac{1}{m})^{k\cdot n}]^{k}.$$
+
+If we were using $k$ Bloom Filters of smaller size $m' < m$ each with 
+**only one** hash function, the error rate would be
+
+$$P'_e = [1 - (1 - \frac{1}{m'})^{n}]^{k}.$$
+
+To achieve the same error rate, let $P_{set} = P'_{set}$,
+
+$$[1 - (1 - \frac{1}{m})^{k\cdot n}]^{k} = [1 - (1 - \frac{1}{m'})^{n}]^{k}$$
+
+$$\Downarrow$$
+
+$$(1 - \frac{1}{m'}) = (1 - \frac{1}{m})^{k}$$
+By [Taylor Expansion](https://en.wikipedia.org/wiki/Taylor_series), 
+
+$$\Downarrow$$
+
+$$(1 - \frac{1}{m'}) = (1 - \frac{1}{m})^{k} = 1 - \frac{k}{m} + \frac{k(k-1)}{2m^2} + \cdots$$
+The filter size is usually much larger than the number of hash functions $m \gg k$,
+
+$$\Downarrow$$
+
+$$(1 - \frac{1}{m'}) \approx 1 - \frac{k}{m} + O(\frac{1}{m^2})$$
+
+$$\Downarrow$$
+$$m' = \frac{m}{k}.$$
+
+Besides, [J.K. Mullin](https://ieeexplore.ieee.org/document/52778) 
+
+
 
 ## Filter in Distributed Systems (2000s)
 [Bigtable](https://static.googleusercontent.com/media/research.google.com/en//archive/bigtable-osdi06.pdf)
