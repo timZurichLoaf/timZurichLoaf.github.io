@@ -62,6 +62,35 @@ to $1$ by the insertions of some other elements.
 The time & space efficiency of Bloom Filter comes at the cost of accuracy. 
 Hash collisions may result in <span style="color:red">false positives</span>.
 
+### The bigger false-positive rate $P_e$, the more compact filter
+
+In an array of $m$ bits,
+a hash function supposedly maps uniformly to one of the $m$ bits.
+So it sets a bit to $1$ with a probability of $P_{1} = \frac{1}{m}$
+and leaves a bit to $0$ with $P_{0} = 1 - \frac{1}{m}$.
+
+For a Bloom filter with $k$ hash functions, the hash functions are indepedent.
+After inserting an element, the probability of some bit remains $0$ is
+
+$$P_{0}^k = (1 - \frac{1}{m})^k.$$
+
+After inserting all $n$ elements, the probability of some bit remains $0$ is
+
+$$P_{0}^{k \cdot n} = (1 - \frac{1}{m})^{k \cdot n}.$$
+
+Then the probability of a bit being set is
+
+$$P_{set} = 1 - P_{0}^{k \cdot n} = 1 - (1 - \frac{1}{m})^{k \cdot n}.$$
+
+The query of an element that's never been inserted returns **false positives**
+if any of the $k$ bits
+
+
+
+For a Bloom filter with $k$ hash functions with $n$ elements inserted, the possibility of seeing such a false positive is
+
+$$P_e = [1 - (1 - \frac{1}{m})^{k\cdot n}]^{k}.$$
+
 
 ## Exact Semi-joins (1981)
 
@@ -148,17 +177,6 @@ If we don't need to filter out **every** irrelevant tuple,
 [J.K. Mullin](https://ieeexplore.ieee.org/document/52778) finds [Bloom Filter](https://dl.acm.org/doi/10.1145/362686.362692) an answer to the first question. Bloom Filters are easy to compute and compact, so cheap to transmit over a network in a distributed database. 
 It only gives **false positives** when a membership is queried, 
 so it doesn't prune too hard to exclude any legit tuple from the final join result.
-
-### The bigger false-positive rate $P_e$, the more compact filter
-
-In an array of $m$ bits,
-a hash function sets a bit to $1$ with a probability of $P_{set} = \frac{1}{m}$.
-
-For a Bloom filter with $k$ hash functions, the insertion of 
-
-For a Bloom filter with $k$ hash functions with $n$ elements inserted, the possibility of seeing such a false positive is
-
-$$P_e = [1 - (1 - \frac{1}{m})^{k\cdot n}]^{k}.$$
 
 ## Filter in Distributed Systems (2000s)
 [Bigtable](https://static.googleusercontent.com/media/research.google.com/en//archive/bigtable-osdi06.pdf)
