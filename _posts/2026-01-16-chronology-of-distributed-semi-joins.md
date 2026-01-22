@@ -11,17 +11,15 @@ Say we start with as bit array of size $10$ and $2$ hash functions,
 
 $$h_1(x) = x \bmod 10; h_2(x) = (x + 4) \bmod 10.$$
 
-### Initial Bit Array
-
 Initially, all the bits are set to $0$, meaning no element has been inserted yet.
 
+{:class="table table-bordered"}
 | Index | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 |
 |------:|---|---|---|---|---|---|---|---|---|---|
 | Bit   | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 
-### Insert `1`
-
-Because $h_1(1) = 1$ and $h_2(1) = 5$, 
+To insert `1`,
+because $h_1(1) = 1$ and $h_2(1) = 5$, 
 the bits at positions **1** and **5** are set to $1$.
 
 | Index | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 |
