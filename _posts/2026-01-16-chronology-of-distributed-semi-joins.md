@@ -277,11 +277,13 @@ $$[1 - (1 - \frac{1}{m})^{k\cdot n}]^{k} = [1 - (1 - \frac{1}{m'})^{n}]^{k}$$
 $$\Downarrow$$
 
 $$(1 - \frac{1}{m'}) = (1 - \frac{1}{m})^{k}$$
+
 By [Taylor Expansion](https://en.wikipedia.org/wiki/Taylor_series), 
 
 $$\Downarrow$$
 
 $$(1 - \frac{1}{m'}) = (1 - \frac{1}{m})^{k} = 1 - \frac{k}{m} + \frac{k(k-1)}{2m^2} + \cdots$$
+
 The filter size is usually much larger than the number of hash functions $m \gg k$,
 
 $$\Downarrow$$
@@ -289,6 +291,7 @@ $$\Downarrow$$
 $$(1 - \frac{1}{m'}) \approx 1 - \frac{k}{m} + O(\frac{1}{m^2})$$
 
 $$\Downarrow$$
+
 $$m' \approx \frac{m}{k}.$$
 
 
