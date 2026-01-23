@@ -1,15 +1,15 @@
 ---
 layout: post
-title: "[invisible] Chronology of Distributed Semi-Joins"
+title: "[invisible] Chronology of Distributed Joins"
 ---
 
 ## Probabilistic Filter for Membership Queries (1970) 
-[Bloom Filter](https://dl.acm.org/doi/10.1145/362686.362692) is a space-efficient probabilistic data structure for fast membership queries.
+[Bloom filter](https://dl.acm.org/doi/10.1145/362686.362692) is a space-efficient probabilistic data structure for fast membership queries.
 
-Two key components of a Bloom filter are bit array and hash functions.
-Say we start with as bit array of size $10$ and $2$ hash functions,
+Two key components of a Bloom filter are bit array and hash function.
+Say we start with a bit array of size $10$ and $2$ hash functions,
 
-$$h_1(x) = x \bmod 10; h_2(x) = (x + 4) \bmod 10.$$
+$$h_1(x) = x \bmod 10;\quad h_2(x) = (x + 4) \bmod 10.$$
 
 Initially, all the bits are set to $0$, meaning no element has been inserted yet.
 
@@ -59,7 +59,7 @@ to $1$ by the insertions of some other elements.
 | Bit   | 0 | <span style="color:red">1</span> | 0 | 1 | 0 | 1 | 0 | <span style="color:red">1</span> | 0 | 0 | -->
 
 
-The time & space efficiency of Bloom Filter comes at the cost of accuracy. 
+The time & space efficiency of Bloom filter comes at the cost of accuracy. 
 Hash collisions may result in <span style="color:red">false positives</span>.
 
 ***Increasing the filter size reduces the false positive rate.***
@@ -95,6 +95,26 @@ $$P_e \approx [1 - e^\frac{-k\cdot n}{m}]^{k}.$$
 
 Given the number of elements $n$ and that of hash functions $k$,
 increasing the filter size $m$ reduces the false positive rate $P_e$.
+
+***Optimal Setup***
+
+A Bloom filter is a bit array where each bit is binary, either 0 or 1.
+It contains the maximum information per bit,
+measured by [entropy](https://en.wikipedia.org/wiki/Entropy_in_thermodynamics_and_information_theory), when half-full, 
+i.e. $P_{set} = \frac{1}{2}$.
+
+$$1 - (1 - \frac{1}{m})^{k \cdot n} = \frac{1}{2}$$
+
+$$\Downarrow$$
+
+$${k \cdot n} \cdot \log(1 - \frac{1}{m}) = -\log(2)$$
+
+Because $\lim_{m\to \infty}\log(1 - \frac{1}{m}) = - \frac{1}{m}$,
+
+$$\Downarrow$$
+
+$$m \approx \frac{{k \cdot n}}{\log(2)}.$$
+
 
 
 ## Exact Semi-joins (1981)
@@ -175,17 +195,18 @@ Now the questions are
 2. In what order to perform those semi-joins?
 
 
-## Distributed Semi-join with Filter (1990)
+## Distributed Semi-join with filter (1990)
 
 The very purpose of semi-joins is to prune the tables.
 If we don't need to filter out **every** irrelevant tuple, 
-[J.K. Mullin](https://ieeexplore.ieee.org/document/52778) finds [Bloom Filter](https://dl.acm.org/doi/10.1145/362686.362692) an answer to the first question. Bloom Filters are easy to compute and compact, therefore cheap to transmit over the network in a distributed database. 
+[J.K. Mullin](https://ieeexplore.ieee.org/document/52778) finds [Bloom filter](https://dl.acm.org/doi/10.1145/362686.362692) an answer to the first question. Bloom filters are easy to compute and compact, therefore cheap to transmit over the network in a distributed database. 
 It only gives **false positives** for membership queries, 
 so it doesn't prune too hard to exclude any legit tuple from the final join result.
 
-For the 3-table join above, if we were using a Bloom Filter built on $T(C)$ 
-to filter out **some** irrelevant tuples from $S(B, C)$ but leaving
-a false-positive $\color{orange}(1, 4)$, the query results would remain correct.
+For the 3-table join above, if we were using a Bloom filter built on $T(C)$ 
+to do an **approximate semi-join** that filters out **some** irrelevant 
+tuples from $S(B, C)$ but leaving a false-positive $\color{orange}(1, 4)$, 
+the final join would remain correct.
 
 <div style="text-align: center;">
 <table style="display:inline-block; margin-right:40px; vertical-align:top; text-align:center;">
@@ -222,14 +243,29 @@ a false-positive $\color{orange}(1, 4)$, the query results would remain correct.
 </table>
 </div>
 
-***Using $k$ filters of size $\frac{m}{k}$ instead of one filter of size $m$***
+***Small partitioned filter to check if a semi-join is useless***
 
-Recall that the error rate of a Bloom Filter of size $m$ with $k$ hash functions 
+For the second question, [J.K. Mullin](https://ieeexplore.ieee.org/document/52778)
+notices that some semi-joins are totally unnecessary, like $S \ltimes R$
+that does **NOT** filter out a single tuple from $S$.
+
+His approach is to partition one big Bloom filter into multiple smaller ones,
+send them one-by-one over the network and abort this approximate semi-join
+between two nodes (supposedly hosting two tables) once
+a small partitioned filter fails in filtering out **many enough** irrelevant tuples.
+
+How many is enough? That's subjective. But a rule of thumb here is that 
+the size of irrelevant tuples needs to outweigh that of the partitioned
+filter to justify the communication cost.
+
+How to partition? ***$k$ filters each of size $\frac{m}{k}$***.
+
+Recall that the error rate of a Bloom filter of size $m$ with $k$ hash functions 
 and $n$ elements inserted is
 
 $$P_e = [1 - (1 - \frac{1}{m})^{k\cdot n}]^{k}.$$
 
-If we were using $k$ Bloom Filters of smaller size $m' < m$ each with 
+If we were using $k$ partitioned Bloom filters of smaller size $m' < m$ each with 
 **only one** hash function, the error rate would be
 
 $$P'_e = [1 - (1 - \frac{1}{m'})^{n}]^{k}.$$
@@ -253,17 +289,21 @@ $$\Downarrow$$
 $$(1 - \frac{1}{m'}) \approx 1 - \frac{k}{m} + O(\frac{1}{m^2})$$
 
 $$\Downarrow$$
-$$m' = \frac{m}{k}.$$
-
-Besides, [J.K. Mullin](https://ieeexplore.ieee.org/document/52778) 
+$$m' \approx \frac{m}{k}.$$
 
 
+## Adoption in Distributed Systems (2006~2012)
+[Bigtable](https://static.googleusercontent.com/media/research.google.com/en//archive/bigtable-osdi06.pdf) adopted
+Bloom filter to check whether an SSTable might contain any data for a specified row/column pair. 
+A small amount of tablet server memory used for storing Bloom filters 
+drastically reduced the number of disk seeks required for read operations. 
 
-## Filter in Distributed Systems (2000s)
-[Bigtable](https://static.googleusercontent.com/media/research.google.com/en//archive/bigtable-osdi06.pdf)
+[Microsoft SQL Server](https://vldb.org/cidrdb/papers/2026/p29-zhao.pdf) 
+has been using Bloom filters and 
+an equivalence of semijoin (exact bit-vector filters) since 2012.
 
-## Looking ahead with Filters (2010s)
-
+## Looking ahead with Filters (2017)
+[Lookahead Information Passing (LIP)](https://dl.acm.org/doi/10.14778/3090163.3090167)
 
 ## Accelarating Distributed Semi-join (2020-2025)
 
