@@ -60,7 +60,7 @@ to $1$ by the insertions of some other elements.
 
 
 The time & space efficiency of Bloom filter comes at the cost of accuracy. 
-Hash collisions may result in <span style="color:red">false positives</span>.
+Hash collisions result in <span style="color:red">false positives</span>.
 
 ***Increasing the filter size reduces the false positive rate.***
 
@@ -195,11 +195,11 @@ Now the questions are
 2. In what order to perform those semi-joins?
 
 
-## Distributed Semi-join with filter (1990)
+## Distributed Approximate Semi-joins (1986)
 
 The very purpose of semi-joins is to prune the tables.
 If we don't need to filter out **every** irrelevant tuple, 
-[J.K. Mullin](https://ieeexplore.ieee.org/document/52778) finds [Bloom filter](https://dl.acm.org/doi/10.1145/362686.362692) an answer to the first question. Bloom filters are easy to compute and compact, therefore cheap to transmit over the network in a distributed database. 
+[Mackert and Lohman](https://dl.acm.org/doi/epdf/10.1145/16856.16863) finds [Bloom filter](https://dl.acm.org/doi/10.1145/362686.362692) an answer to the first question. Bloom filters are easy to compute and compact, therefore cheap to transmit over the network in a distributed database. 
 It only gives **false positives** for membership queries, 
 so it doesn't prune too hard to exclude any legit tuple from the final join result.
 
@@ -243,9 +243,10 @@ the final join would remain correct.
 </table>
 </div>
 
-***Small partitioned filter to check if a semi-join is useless***
+## Some Unnecessary Semi-joins (1990)
 
-For the second question, [J.K. Mullin](https://ieeexplore.ieee.org/document/52778)
+
+[Mullin](https://ieeexplore.ieee.org/document/52778)
 notices that some semi-joins are totally unnecessary, like $S \ltimes R$
 that does **NOT** filter out a single tuple from $S$.
 
@@ -294,12 +295,50 @@ $$\Downarrow$$
 
 $$m' \approx \frac{m}{k}.$$
 
+## Cascading Approximate Semi-joins (2008)
 
-## Adoption in Distributed Systems (2006~2012)
-[Bigtable](https://static.googleusercontent.com/media/research.google.com/en//archive/bigtable-osdi06.pdf) adopted
-Bloom filter to check whether an SSTable might contain any data for a specified row/column pair. 
-A small amount of tablet server memory used for storing Bloom filters 
-drastically reduced the number of disk seeks required for read operations. 
+Network is costly, while local computation is cheap. 
+Upon receing a Bloom filter from the previous node, the current node can refine that filter locally with a cheap bitwise AND operations and pass on the refined to
+the next node.
+
+Say we have two single-column tables, the first one with two tuples $1, 2$ and the second one with $2, 3$.
+
+The two hash functions
+$$h_1(x) = x \bmod 10;\quad h_2(x) = (x + 4) \bmod 10$$
+
+would give us the Bloom filters below
+
+{:class="table table-bordered table-hover table-sm"}
+| BF1   | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 |
+|------:|---|---|---|---|---|---|---|---|---|---|
+| Bit   | 0 | <span style="color:red">1</span> | <span style="color:red">1</span> | 0 | 0 | <span style="color:red">1</span> | <span style="color:red">1</span> | 0 | 0 | 0 |
+
+{:class="table table-bordered table-hover table-sm"}
+| BF2   | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 |
+|------:|---|---|---|---|---|---|---|---|---|---|
+| Bit   | 0 | 0 | <span style="color:red">1</span> | <span style="color:red">1</span> | 0 | 0 | <span style="color:red">1</span> | <span style="color:red">1</span> | 0 | 0 |
+
+Local bitwise AND gives us the refined filter as
+
+{:class="table table-bordered table-hover table-sm"}
+| BF1 & 2   | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 |
+|------:|---|---|---|---|---|---|---|---|---|---|
+| Bit   | 0 | 0 | <span style="color:red">1</span> | 0 | 0 | 0 | <span style="color:red">1</span> | 0 | 0 | 0 |
+
+which contains the information about the tuples apearing in **both** tables and can be passed on to the next table.
+
+
+<img style='height: 85%; width: 85%; object-fit: contain' src="{{site.baseurl}}/assets/img/20260116_distributed_joins/ramesh_2008.png">
+
+
+
+## Adoption in Distributed Systems (2010 $\pm$ 5)
+[Bigtable](https://static.googleusercontent.com/media/research.google.com/en//archive/bigtable-osdi06.pdf) has a bunch of immutable SSTables (Sorted String Tables) partitioned into chunks
+and stored in [GFS](https://static.googleusercontent.com/media/research.google.com/en//archive/gfs-sosp2003.pdf) over multiple nodes.
+Each SSTable has a Bloom filter to check whether it **might** contain any data for a specified row/column pair. 
+A tablet server manages multiple SSTables and dedicates
+a small amount of memory for storing Bloom filters, which 
+drastically reduces the number of disk seeks required for read operations. 
 
 [Microsoft SQL Server](https://vldb.org/cidrdb/papers/2026/p29-zhao.pdf) 
 has been using Bloom filters and 
