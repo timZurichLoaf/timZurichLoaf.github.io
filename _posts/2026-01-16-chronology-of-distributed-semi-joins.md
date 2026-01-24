@@ -295,13 +295,14 @@ $$\Downarrow$$
 
 $$m' \approx \frac{m}{k}.$$
 
-## Cascading Approximate Semi-joins (2008)
+## Refining Approximate Semi-joins (2008)
 
 Network is costly, while local computation is cheap. 
-Upon receing a Bloom filter from the previous node, the current node can refine that filter locally with a cheap bitwise AND operations and pass on the refined to
-the next node.
+Upon receing a Bloom filter from the previous node, 
+the current node can refine that filter locally with a cheap bitwise AND operations 
+and pass on the refined to the next node.
 
-Say we have two single-column tables, the first one with two tuples $1, 2$ and the second one with $2, 3$.
+Say we are joining three single-column tables, the first one with two tuples $1, 2$ and the second one with $2, 3$.
 
 The two hash functions
 $$h_1(x) = x \bmod 10;\quad h_2(x) = (x + 4) \bmod 10$$
@@ -321,15 +322,35 @@ would give us the Bloom filters below
 Local bitwise AND gives us the refined filter as
 
 {:class="table table-bordered table-hover table-sm"}
-| BF1 & 2   | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 |
+| BF1&2   | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 |
 |------:|---|---|---|---|---|---|---|---|---|---|
 | Bit   | 0 | 0 | <span style="color:red">1</span> | 0 | 0 | 0 | <span style="color:red">1</span> | 0 | 0 | 0 |
 
-which contains the information about the tuples apearing in **both** tables and can be passed on to the next table.
+that contains the information about the tuples apearing in **both** tables
+and can be passed it on to the third table.
 
+[Ramesh](http://link.springer.com/10.1007/978-3-540-89737-8_15) sees two ways to refine the approximate semi-joins in 
+a master-slaves (or user-sites) distributed database such as the one below, where $\text{Site}_k$ stores table $T_k$; $BF_{i, j, k}$ is
+a Bloom filter refined by $T_i$, $T_j$, $T_k$; $RS_{i, j, j}$ is
+the join result of $T_i$, $T_j$, $T_k$.
 
 <img style='height: 85%; width: 85%; object-fit: contain' src="{{site.baseurl}}/assets/img/20260116_distributed_joins/ramesh_2008.png">
 
+The scheme (a) refines the Bloom filters in one pass from $\text{Site}_1$, $\text{Site}_2$ to $\text{Site}_N$ in a cascading manner.
+It then incrementally computes the join result in a reversed pass from $\text{Site}_N$ back to $\text{Site}_1$ before returning
+the final join result to the user.
+
+The scheme (b) refines the Bloom filters in two passes, first left-to-right from $\text{Site}_1$, $\text{Site}_2$ to $\text{Site}_N$ 
+and then right-to-left. 
+Each site then uses the highly refined filter at hand to return 
+a pruned table to the user who eventually computes the final join result.
+
+The network cost overweighs the local computation, therefore 
+determining the order of those approximate semi-joins.
+Because of the incremental computation of join result, 
+the scheme (a) relies uses the order for semi-joins and the reversed 
+order for joins. The scheme (b) has the flexibility of adopting a
+different order when the user executes the final join.
 
 
 ## Adoption in Distributed Systems (2010 $\pm$ 5)
