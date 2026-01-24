@@ -251,11 +251,10 @@ notices that some semi-joins are totally unnecessary, like $S \ltimes R$
 that does **NOT** filter out a single tuple from $S$.
 
 His approach is to partition one big Bloom filter into multiple smaller ones,
-send them one-by-one over the network and abort this approximate semi-join
-between two nodes (supposedly hosting two tables) once
+send them one-by-one over the network and terminate this approximate semi-join between two nodes (supposedly hosting two tables) once
 a small partitioned filter fails in filtering out **many enough** irrelevant tuples.
 
-How many is enough? That's subjective. But a rule of thumb here is that 
+How many is enough? A rule of thumb is that 
 the size of irrelevant tuples needs to outweigh that of the partitioned
 filter to justify the communication cost.
 
@@ -294,6 +293,13 @@ $$(1 - \frac{1}{m'}) \approx 1 - \frac{k}{m} + O(\frac{1}{m^2})$$
 $$\Downarrow$$
 
 $$m' \approx \frac{m}{k}.$$
+
+## Adoption in Distributed Systems (2006)
+[Bigtable](https://static.googleusercontent.com/media/research.google.com/en//archive/bigtable-osdi06.pdf) maintains a Bloom filter
+for each logical storage unit, SSTables (Sorted String Tables),
+to check whether it **might** contain any data for a specified row/column pair. 
+This pratice turns out 
+drastically reducing the number of disk seeks required for read operations. 
 
 ## Refining Approximate Semi-joins (2008)
 
@@ -352,23 +358,111 @@ the scheme (a) relies uses the order for semi-joins and the reversed
 order for joins. The scheme (b) has the flexibility of adopting a
 different order when the user executes the final join.
 
+## Predict Transfer for Distributed Joins (2025)
 
-## Adoption in Distributed Systems (2010 $\pm$ 5)
-[Bigtable](https://static.googleusercontent.com/media/research.google.com/en//archive/bigtable-osdi06.pdf) has a bunch of immutable SSTables (Sorted String Tables) partitioned into chunks
-and stored in [GFS](https://static.googleusercontent.com/media/research.google.com/en//archive/gfs-sosp2003.pdf) over multiple nodes.
-Each SSTable has a Bloom filter to check whether it **might** contain any data for a specified row/column pair. 
-A tablet server manages multiple SSTables and dedicates
-a small amount of memory for storing Bloom filters, which 
-drastically reduces the number of disk seeks required for read operations. 
+Joins are not always on the same attribute.
+Say we want to join the following three table $R(A, B) \bowtie S(B, C) \bowtie T(C)$.
 
-[Microsoft SQL Server](https://vldb.org/cidrdb/papers/2026/p29-zhao.pdf) 
-has been using Bloom filters and 
-an equivalence of semijoin (exact bit-vector filters) since 2012.
+A left-to-right pass of semi-joins $S := S \ltimes R$ and 
+$T := T \ltimes S$ trims away $(3, 4)$ from $S(B, C)$.
 
-## Looking ahead with Filters (2017)
-[Lookahead Information Passing (LIP)](https://dl.acm.org/doi/10.14778/3090163.3090167)
+<div style="text-align: center; white-space: nowrap;">
 
-## Accelarating Distributed Semi-join (2020-2025)
+<table style="display:inline-block; vertical-align:top; text-align:center; margin-right:10px;">
+  <thead>
+    <tr>
+      <th colspan="2">R(A, B)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td>1</td><td>1</td></tr>
+    <tr><td>2</td><td>1</td></tr>
+    <tr><td>3</td><td>2</td></tr>
+    <tr><td>4</td><td>5</td></tr>
+  </tbody>
+</table>
+<span style="display:inline-block; vertical-align:middle; font-size:24px; margin:0 10px;">
+  →
+</span>
+<table style="display:inline-block; vertical-align:top; text-align:center; margin-right:10px;">
+  <thead>
+    <tr>
+      <th colspan="2">S(B, C)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td>1</td><td>3</td></tr>
+    <tr><td>1</td><td>2</td></tr>
+    <tr><td>2</td><td>3</td></tr>
+    <tr>
+      <td style="text-decoration: line-through;">3</td>
+      <td style="text-decoration: line-through;">4</td>
+    </tr>
+  </tbody>
+</table>
+<span style="display:inline-block; vertical-align:middle; font-size:24px; margin:0 10px;">
+  →
+</span>
+<table style="display:inline-block; vertical-align:top; text-align:center;">
+  <tr><th>T(C)</th></tr>
+  <tr><td>3</td></tr>
+</table>
+
+</div>
+
+A right-to-left pass
+
+<div style="text-align: center; white-space: nowrap;">
+
+<table style="display:inline-block; vertical-align:top; text-align:center; margin-right:10px;">
+  <thead>
+    <tr>
+      <th colspan="2">R(A, B)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td>1</td><td>1</td></tr>
+    <tr><td>2</td><td>1</td></tr>
+    <tr><td>3</td><td>2</td></tr>
+    <tr>
+      <td style="text-decoration: line-through;">4</td>
+      <td style="text-decoration: line-through;">5</td>
+    </tr>
+  </tbody>
+</table>
+<span style="display:inline-block; vertical-align:middle; font-size:24px; margin:0 10px;">
+  ←
+</span>
+<table style="display:inline-block; vertical-align:top; text-align:center; margin-right:10px;">
+  <thead>
+    <tr>
+      <th colspan="2">S(B, C)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td>1</td><td>3</td></tr>
+    <tr>
+      <td style="text-decoration: line-through;">1</td>
+      <td style="text-decoration: line-through;">2</td>
+    </tr>
+    <tr><td>2</td><td>3</td></tr>
+    <tr>
+      <td style="text-decoration: line-through;">3</td>
+      <td style="text-decoration: line-through;">4</td>
+    </tr>
+  </tbody>
+</table>
+<span style="display:inline-block; vertical-align:middle; font-size:24px; margin:0 10px;">
+  ←
+</span>
+<table style="display:inline-block; vertical-align:top; text-align:center;">
+  <tr><th>T(C)</th></tr>
+  <tr><td>3</td></tr>
+</table>
+
+</div>
+
+
 
 ## What's next? (2026)
 
