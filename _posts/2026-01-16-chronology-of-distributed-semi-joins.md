@@ -49,7 +49,7 @@ of the steep network cost to transmit the redundant.
 
 <div style="text-align: center;">
 <table style="display:inline-block; vertical-align:top; text-align:center;">
-<caption style="caption-side:top; font-weight:bold; margin-bottom:6px;">
+<caption style="caption-side:top; font-weight:bold; margin-right:40px;  margin-bottom:6px;">
     R ⋈ S
   </caption>
   <thead>
@@ -79,15 +79,10 @@ of the steep network cost to transmit the redundant.
   </tbody>
 </table>
 </div>
-
-An alternative choice to process $R(A, B) \bowtie S(B, C)$
-first is arguably better, as it leaves the only tuple that
-contributes to the final join result.
-
-
+<!--  -->
 <div style="text-align: center;">
 <table style="display:inline-block; vertical-align:top; text-align:center;">
-  <caption style="caption-side:top; font-weight:bold; margin-bottom:6px;">
+  <caption style="caption-side:top; font-weight:bold;margin-right:40px; margin-bottom:6px;">
     S ⋈ T
   </caption>
   <thead>
@@ -104,6 +99,13 @@ contributes to the final join result.
   </tbody>
 </table>
 </div>
+
+An alternative choice to process $R(A, B) \bowtie S(B, C)$
+first is arguably better, as it leaves the only tuple that
+contributes to the final join result.
+
+
+
 
 Assuming each table is stored on a different node,
 we still need to ship many redundant tuples to facilitate that join.
