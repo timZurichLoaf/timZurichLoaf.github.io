@@ -1,9 +1,198 @@
 ---
 layout: post
-title: "[invisible] Chronology of Distributed Joins"
+title: "[invisible] Optimization of Distributed Joins"
 ---
 
-## Probabilistic Filter for Membership Queries (1970) 
+## Challenges of Joins
+When we join the following three table $R(A, B) \bowtie S(B, C) \bowtie T(C)$, there is a decision to make about which two to join first.
+
+<div style="text-align: center;">
+<table style="display:inline-block; margin-right:40px; vertical-align:top; text-align:center;">
+  <thead>
+    <tr>
+      <th colspan="2">R(A, B)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td>1</td><td>1</td></tr>
+    <tr><td>2</td><td>1</td></tr>
+    <tr><td>3</td><td>2</td></tr>
+    <tr><td>4</td><td>2</td></tr>
+  </tbody>
+</table>
+<!--  -->
+<table style="display:inline-block; margin-right:40px; vertical-align:top; text-align:center;">
+  <thead>
+    <tr>
+      <th colspan="2">S(B, C)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td>1</td><td>1</td></tr>
+    <tr><td>1</td><td>2</td></tr>
+    <tr><td>1</td><td>3</td></tr>
+    <tr><td>1</td><td>4</td></tr>
+  </tbody>
+</table>
+<!--  -->
+<table style="display:inline-block; vertical-align:top; text-align:center;">
+  <tr><th>T(C)</th></tr>
+  <tr><td>3</td></tr>
+  <tr><td>5</td></tr>
+</table>
+</div>
+
+$R(A, B) \bowtie S(B, C)$ creates in the big intermediate result below, where only two tuples highlighted 
+in red eventually appear in the final join result.
+It is even more undesirable in a distributed setting, because
+of the steep network cost to transmit the redundant.
+
+<div style="text-align: center;">
+<table style="display:inline-block; vertical-align:top; text-align:center;">
+<caption style="caption-side:top; font-weight:bold; margin-bottom:6px;">
+    R ⋈ S
+  </caption>
+  <thead>
+    <tr>
+      <th>A</th>
+      <th>B</th>
+      <th>C</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td>1</td><td>1</td><td>1</td></tr>
+    <tr><td>1</td><td>1</td><td>2</td></tr>
+    <tr>
+      <td><span style="color:red">1</span></td>
+      <td><span style="color:red">1</span></td>
+      <td><span style="color:red">3</span></td>
+    </tr>
+    <tr><td>1</td><td>1</td><td>4</td></tr>
+    <tr><td>2</td><td>1</td><td>1</td></tr>
+    <tr><td>2</td><td>1</td><td>2</td></tr>
+    <tr>
+      <td><span style="color:red">2</span></td>
+      <td><span style="color:red">1</span></td>
+      <td><span style="color:red">3</span></td>
+    </tr>
+    <tr><td>2</td><td>1</td><td>4</td></tr>
+  </tbody>
+</table>
+</div>
+
+An alternative choice to process $R(A, B) \bowtie S(B, C)$
+first is arguably better, as it leaves the only tuple that
+contributes to the final join result.
+
+
+<div style="text-align: center;">
+<table style="display:inline-block; vertical-align:top; text-align:center;">
+  <caption style="caption-side:top; font-weight:bold; margin-bottom:6px;">
+    S ⋈ T
+  </caption>
+  <thead>
+    <tr>
+      <th>B</th>
+      <th>C</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><span style="color:red">1</span></td>
+      <td><span style="color:red">3</span></td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+Assuming each table is stored on a different node,
+we still need to ship many redundant tuples to facilitate that join.
+Is there a way to avoid or at least cut down the redundant network cost?
+
+## Exact Semi-joins
+
+A semi-join $R \ltimes S$ keeps only the tuples in $R$ who also appear in $S$. Say we have two single-column tables $R(A)$ and $S(A)$.
+
+<div style="text-align: center;">
+<table style="display:inline-block; margin-right:40px;vertical-align:top; text-align:center;">
+  <!-- <caption><b>R(A)</b></caption> -->
+  <tr><th>R(A)</th></tr>
+  <tr><td>1</td></tr>
+  <tr><td><span style="color:red">2</span></td></tr>
+  <tr><td>3</td></tr>
+  <tr><td><span style="color:red">4</span></td></tr>
+</table>
+<!--  -->
+<table style="display:inline-block; vertical-align:top;  text-align:center;">
+  <!-- <caption><b>S(A)</b></caption> -->
+  <tr><th>S(A)</th></tr>
+  <tr><td>2</td></tr>
+  <tr><td>4</td></tr>
+</table>
+</div>
+
+<!-- --- -->
+
+The semi-join $R \ltimes S$ keeps only $\color{red}{2, 4}$ in **R** who also appear in **S**.
+
+[Yannakakis Algorithm](https://dl.acm.org/doi/10.5555/1286831.1286840) 
+uses semi-joins to filter out **every** irrelevant tuple,
+so that the join is executed later on the pruned tables with many fewer tuples.
+
+Take the 3-table join $R(A, B) \bowtie S(B, C) \bowtie T(C)$ as an example again.
+
+<div style="text-align: center;">
+<table style="display:inline-block; margin-right:40px; vertical-align:top; text-align:center;">
+  <thead>
+    <tr>
+      <th colspan="2">R(A, B)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><span style="color:red">1</span></td><td><span style="color:red">1</span></td></tr>
+    <tr><td><span style="color:red">2</span></td><td><span style="color:red">1</span></td></tr>
+    <tr><td>3</td><td>2</td></tr>
+    <tr><td>4</td><td>2</td></tr>
+  </tbody>
+</table>
+<!--  -->
+<table style="display:inline-block; margin-right:40px; vertical-align:top; text-align:center;">
+  <thead>
+    <tr>
+      <th colspan="2">S(B, C)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td>1</td><td>1</td></tr>
+    <tr><td>1</td><td>2</td></tr>
+    <tr><td><span style="color:red">1</span></td><td><span style="color:red">3</span></td></tr>
+    <tr><td>1</td><td>4</td></tr>
+  </tbody>
+</table>
+<!--  -->
+<table style="display:inline-block; vertical-align:top; text-align:center;">
+  <tr><th>T(C)</th></tr>
+  <tr><td><span style="color:red">3</span></td></tr>
+  <tr><td>5</span></td></tr>
+</table>
+</div>
+
+
+The semi-join $S \ltimes T$ finds it enough to only consider the tuple $(1, 3)$ in $S(B, C)$.
+The other semi-join $R \ltimes S$ finds $(1, 1)$ and $(2, 1)$ in $R(A, B)$.
+After pruning, we only need to consider the highlighted tuples while executing the 3-table join.
+
+
+Now the questions are
+1. How to do a semi-join faster & more compactly?
+2. In what order to perform those semi-joins?
+
+
+
+## Compact Bloom Filter for Fast Membership Queries 
+
+A semi-join is a batch of membership queries. 
+
 [Bloom filter](https://dl.acm.org/doi/10.1145/362686.362692) is a space-efficient probabilistic data structure for fast membership queries.
 
 Two key components of a Bloom filter are bit array and hash function.
@@ -116,90 +305,13 @@ $$\Downarrow$$
 $$m \approx \frac{{k \cdot n}}{\log(2)}.$$
 
 
-
-## Exact Semi-joins (1981)
-
-A semi-join is a batch of membership queries. Say we have two single-column tables $R(A)$ and $S(A)$.
-
-<div style="text-align: center;">
-<table style="display:inline-block; margin-right:40px;vertical-align:top; text-align:center;">
-  <!-- <caption><b>R(A)</b></caption> -->
-  <tr><th>R(A)</th></tr>
-  <tr><td>1</td></tr>
-  <tr><td><span style="color:red">2</span></td></tr>
-  <tr><td>3</td></tr>
-  <tr><td><span style="color:red">4</span></td></tr>
-</table>
-<!--  -->
-<table style="display:inline-block; vertical-align:top;  text-align:center;">
-  <!-- <caption><b>S(A)</b></caption> -->
-  <tr><th>S(A)</th></tr>
-  <tr><td>2</td></tr>
-  <tr><td>4</td></tr>
-</table>
-</div>
-
-<!-- --- -->
-
-The semi-join $R \ltimes S$ keeps only $\color{red}{2, 4}$ in **R** who also appear in **S**.
-
-[Yannakakis Algorithm](https://dl.acm.org/doi/10.5555/1286831.1286840) 
-uses semi-joins to filter out **every** irrelevant tuple,
-so that the join is executed later on the pruned tables with many fewer tuples.
-
-For example, we want to join the following three table $R(A, B) \bowtie S(B, C) \bowtie T(C)$.
-
-<div style="text-align: center;">
-<table style="display:inline-block; margin-right:40px; vertical-align:top; text-align:center;">
-  <thead>
-    <tr>
-      <th colspan="2">R(A, B)</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr><td><span style="color:red">1</span></td><td><span style="color:red">1</span></td></tr>
-    <tr><td><span style="color:red">2</span></td><td><span style="color:red">1</span></td></tr>
-    <tr><td>3</td><td>2</td></tr>
-    <tr><td>4</td><td>2</td></tr>
-  </tbody>
-</table>
-<!--  -->
-<table style="display:inline-block; margin-right:40px; vertical-align:top; text-align:center;">
-  <thead>
-    <tr>
-      <th colspan="2">S(B, C)</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr><td>1</td><td>1</td></tr>
-    <tr><td>1</td><td>2</td></tr>
-    <tr><td><span style="color:red">1</span></td><td><span style="color:red">3</span></td></tr>
-    <tr><td>1</td><td>4</td></tr>
-  </tbody>
-</table>
-<!--  -->
-<table style="display:inline-block; vertical-align:top; text-align:center;">
-  <tr><th>T(C)</th></tr>
-  <tr><td><span style="color:red">3</span></td></tr>
-</table>
-</div>
-
-
-The semi-join $S \ltimes T$ finds it enough to consider the tuple $(1, 3)$ in $S(B, C)$.
-The other semi-join $R \ltimes S$ finds $(1, 1)$ and $(2, 1)$ in $R(A, B)$.
-After pruning, we only need to consider the highlighted <span style="color:red">tuples</span> while executing the 3-table join.
-
-
-Now the questions are
-1. How to do a semi-join faster & more compactly?
-2. In what order to perform those semi-joins?
-
-
-## Distributed Approximate Semi-joins (1986)
+## Distributed Approximate Semi-joins
 
 The very purpose of semi-joins is to prune the tables.
+
 If we don't need to filter out **every** irrelevant tuple, 
-[Mackert and Lohman](https://dl.acm.org/doi/epdf/10.1145/16856.16863) finds [Bloom filter](https://dl.acm.org/doi/10.1145/362686.362692) an answer to the first question. Bloom filters are easy to compute and compact, therefore cheap to transmit over the network in a distributed database. 
+[Mackert and Lohman](https://dl.acm.org/doi/epdf/10.1145/16856.16863) finds the compact [Bloom filters](https://dl.acm.org/doi/10.1145/362686.362692) an answer to fast membership queries. Bloom filters are easy to compute locally on each node. Thanks to their compactness, they are cheap to transmit over the network in a distributed database. 
+
 It only gives **false positives** for membership queries, 
 so it doesn't prune too hard to exclude any legit tuple from the final join result.
 
@@ -240,17 +352,18 @@ the final join would remain correct.
 <table style="display:inline-block; vertical-align:top; text-align:center;">
   <tr><th>T(C)</th></tr>
   <tr><td><span style="color:red">3</span></td></tr>
+  <tr><td>5</span></td></tr>
 </table>
 </div>
 
-## Some Unnecessary Semi-joins (1990)
+## Avoid Unnecessary Semi-joins
 
 
 [Mullin](https://ieeexplore.ieee.org/document/52778)
 notices that some semi-joins are totally unnecessary, like $S \ltimes R$
 that does **NOT** filter out a single tuple from $S$.
 
-His approach is to partition one big Bloom filter into multiple smaller ones,
+His solution is to partition one big Bloom filter into multiple smaller ones,
 send them one-by-one over the network and terminate this approximate semi-join between two nodes (supposedly hosting two tables) once
 a small partitioned filter fails in filtering out **many enough** irrelevant tuples.
 
@@ -260,7 +373,7 @@ filter to justify the communication cost.
 
 How to partition? ***$k$ filters each of size $\frac{m}{k}$***.
 
-Recall that the error rate of a Bloom filter of size $m$ with $k$ hash functions 
+The error rate mentioned above for a Bloom filter of size $m$ with $k$ hash functions 
 and $n$ elements inserted is
 
 $$P_e = [1 - (1 - \frac{1}{m})^{k\cdot n}]^{k}.$$
@@ -294,14 +407,14 @@ $$\Downarrow$$
 
 $$m' \approx \frac{m}{k}.$$
 
-## Adoption in Distributed Systems (2006)
+<!-- ## Adoption in Distributed Systems (2006)
 [Bigtable](https://static.googleusercontent.com/media/research.google.com/en//archive/bigtable-osdi06.pdf) maintains a Bloom filter
 for each logical storage unit, SSTables (Sorted String Tables),
 to check whether it **might** contain any data for a specified row/column pair. 
 This pratice turns out 
-drastically reducing the number of disk seeks required for read operations. 
+drastically reducing the number of disk seeks required for read operations.  -->
 
-## Refining Approximate Semi-joins (2008)
+## Refining Approximate Semi-joins
 
 Network is costly, while local computation is cheap. 
 Upon receing a Bloom filter from the previous node, 
