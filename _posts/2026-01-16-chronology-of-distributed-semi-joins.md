@@ -48,15 +48,10 @@ It is even more undesirable in a distributed setting, because
 of the steep network cost to transmit the redundant.
 
 <div style="text-align: center;">
-<table style="display:inline-block; vertical-align:top; text-align:center;">
-<caption style="caption-side:top; font-weight:bold; margin-right:40px;  margin-bottom:6px;">
-    R ⋈ S
-  </caption>
+<table style="display:inline-block; margin-right:40px; vertical-align:top; text-align:center;">
   <thead>
     <tr>
-      <th>A</th>
-      <th>B</th>
-      <th>C</th>
+      <th colspan="3">R(A, B) ⋈ S(B, C)</th>
     </tr>
   </thead>
   <tbody>
@@ -78,17 +73,13 @@ of the steep network cost to transmit the redundant.
     <tr><td>2</td><td>1</td><td>4</td></tr>
   </tbody>
 </table>
-</div>
+<!-- </div> -->
 <!--  -->
-<div style="text-align: center;">
-<table style="display:inline-block; vertical-align:top; text-align:center;">
-  <caption style="caption-side:top; font-weight:bold;margin-right:40px; margin-bottom:6px;">
-    S ⋈ T
-  </caption>
+<!-- <div style="text-align: center;"> -->
+<table style="display:inline-block; margin-right:40px; vertical-align:top; text-align:center;">
   <thead>
     <tr>
-      <th>B</th>
-      <th>C</th>
+      <th colspan="3">S(B, C) ⋈ T(C)</th>
     </tr>
   </thead>
   <tbody>
