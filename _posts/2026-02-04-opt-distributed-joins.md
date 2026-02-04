@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "[invisible] Optimization of Distributed Joins"
+title: "Optimization of Distributed Joins"
 ---
 
 ## Challenges of Joins
