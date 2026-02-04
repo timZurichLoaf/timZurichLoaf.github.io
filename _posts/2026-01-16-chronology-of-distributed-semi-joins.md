@@ -166,7 +166,7 @@ Take the 3-table join $R(A, B) \bowtie S(B, C) \bowtie T(C)$ as an example again
 <table style="display:inline-block; vertical-align:top; text-align:center;">
   <tr><th>T(C)</th></tr>
   <tr><td><span style="color:red">3</span></td></tr>
-  <tr><td>5</span></td></tr>
+  <tr><td>5</td></tr>
 </table>
 </div>
 
@@ -345,7 +345,7 @@ the final join would remain correct.
 <table style="display:inline-block; vertical-align:top; text-align:center;">
   <tr><th>T(C)</th></tr>
   <tr><td><span style="color:red">3</span></td></tr>
-  <tr><td>5</span></td></tr>
+  <tr><td>5</td></tr>
 </table>
 </div>
 
@@ -434,7 +434,7 @@ would give us the Bloom filters below
 Local bitwise AND gives us the refined filter as
 
 {:class="table table-bordered table-hover table-sm"}
-| BF1&2   | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 |
+|<span style="display:inline-block; width:70px">BF1&2</span>| 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 |
 |------:|---|---|---|---|---|---|---|---|---|---|
 | Bit   | 0 | 0 | <span style="color:red">1</span> | 0 | 0 | 0 | <span style="color:red">1</span> | 0 | 0 | 0 |
 
