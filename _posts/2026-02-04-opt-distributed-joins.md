@@ -295,7 +295,7 @@ Because $\lim_{m\to \infty}\log(1 - \frac{1}{m}) = - \frac{1}{m}$,
 
 $$\Downarrow$$
 
-$$m \approx \frac{{k \cdot n}}{\log(2)}.$$
+$$m \approx \frac{{k \cdot n}}{log(2)}.$$
 
 
 ## Distributed Approximate Semi-joins
