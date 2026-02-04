@@ -434,7 +434,7 @@ would give us the Bloom filters below
 Local bitwise AND gives us the refined filter as
 
 {:class="table table-bordered table-hover table-sm"}
-|<span style="display:inline-block; width:35px">BF1&2</span>| 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 |
+| BF1&2 | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 |
 |------:|---|---|---|---|---|---|---|---|---|---|
 | Bit   | 0 | 0 | <span style="color:red">1</span> | 0 | 0 | 0 | <span style="color:red">1</span> | 0 | 0 | 0 |
 
