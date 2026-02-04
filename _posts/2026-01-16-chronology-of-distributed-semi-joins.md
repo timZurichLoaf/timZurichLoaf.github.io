@@ -442,8 +442,8 @@ that contains the information about the tuples apearing in **both** tables
 and can be passed it on to the third table.
 
 [Ramesh](http://link.springer.com/10.1007/978-3-540-89737-8_15) sees two ways to refine the approximate semi-joins in 
-a master-slaves (or user-sites) distributed database such as the one below, where $\text{Site}_k$ stores table $T_k$; $BF_{i, j, k}$ is
-a Bloom filter refined by $T_i$, $T_j$, $T_k$; $RS_{i, j, j}$ is
+a master-slaves (or user-sites) distributed database such as the one below, where $\text{Site}_k$ stores table $T_k$; $BF_{i\, j\, k}$ is
+a Bloom filter refined by $T_i$, $T_j$, $T_k$; $RS_{i\, j\, k}$ is
 the join result of $T_i$, $T_j$, $T_k$.
 
 <img style='height: 85%; width: 85%; object-fit: contain' src="{{site.baseurl}}/assets/img/20260116_distributed_joins/ramesh_2008.png">
