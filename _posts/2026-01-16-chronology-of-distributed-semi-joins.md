@@ -309,7 +309,7 @@ It only gives **false positives** for membership queries,
 so it doesn't prune too hard to exclude any legit tuple from the final join result.
 
 For the 3-table join above, if we were using a Bloom filter built on $T(C)$ 
-to do an **approximate semi-join** that filters out **some** irrelevant 
+to do an **approximate semi-join** $\tilde{\ltimes}$ that filters out **some** irrelevant 
 tuples from $S(B, C)$ but leaving a false-positive $\color{orange}(1, 4)$, 
 the final join would remain correct.
 
@@ -353,7 +353,7 @@ the final join would remain correct.
 
 
 [Mullin](https://ieeexplore.ieee.org/document/52778)
-notices that some semi-joins are totally unnecessary, like $S \ltimes R$
+notices that some (approximate) semi-joins are totally unnecessary, like $S \tilde{\ltimes} R$
 that does **NOT** filter out a single tuple from $S$.
 
 His solution is to partition one big Bloom filter into multiple smaller ones,
@@ -471,11 +471,11 @@ like the running example of 3-table join $R(A, B) \bowtie S(B, C) \bowtie T(C)$,
 are not enough.
 
 [Predicate Transfer](https://www.cidrdb.org/cidr2024/papers/p22-yang.pdf) extends the Bloom-filter-powered approximate semi-joins to different attributes across multiple tables.
-For example, when we consider a left-to-right pass of semi-joins $S := S \ltimes R$, 
-$T := T \ltimes S$ and assume no false positive. 
-What happens behind the scene is a Bloom filter on $R(B)$
-being shipped to $S(B, C)$ to filter out <del>$(3, 4)$</del> and
-another Bloom filter on the filtered $S(C)$ being shipped to
+For example, when we consider a left-to-right pass $S := S \tilde{\ltimes} R$, 
+$T := T \tilde{\ltimes} S$ and assume no false positive. 
+A Bloom filter on $R(B)$ is shipped behind the scene 
+to $S(B, C)$ to filter out <del>$(3, 4)$</del> and
+another Bloom filter on the filtered $S(C)$ to
 $T(C)$ to filter out <del>$(5)$</del>.
 
 <div style="text-align: center; white-space: nowrap;">
@@ -522,8 +522,8 @@ $T(C)$ to filter out <del>$(5)$</del>.
 </table>
 </div>
 
-A right-to-left pass semi-joins $S := S \ltimes T$ and 
-$R := R \ltimes S$ further filters out <del>$(1, 2)$</del> from $S(B, C)$
+Another right-to-left pass $S := S \tilde{\ltimes} T$ and 
+$R := R \tilde{\ltimes} S$ further filters out <del>$(1, 2)$</del> from $S(B, C)$
 and <del>$(4, 5)$</del> from $R(A, B)$.
 
 <div style="text-align: center; white-space: nowrap;">
@@ -575,9 +575,13 @@ and <del>$(4, 5)$</del> from $R(A, B)$.
 </table>
 </div>
 
-Each table (node) receives some incoming filters on join attributes
+During a pass, each table (node) receives some incoming filters on join attributes
 to filter out its redundant tuples and generates some outgoing
 filters on potentially different join attributes.
+
+In the distributed database below, two partions $R1$ and $R2$ of $R(A, B)$
+are stored on node $1$ and $2$ respectively. So are those of $S(B, C)$.
+
 
 <div style="text-align: center;">
   <!-- <table style="display:inline-block; vertical-align:top; text-align:center; border-collapse:collapse;"> -->
@@ -589,9 +593,9 @@ filters on potentially different join attributes.
         <th></th>
       </tr>
       <tr>
-        <th colspan="2">$R_1(A, B)$</th>
+        <th colspan="2">R1(A, B)</th>
         <!-- <th style="border-left:4px solid black;"></th> -->
-        <th style="border-left:4px solid black;" colspan="2">$S_1(B, C)$</th>
+        <th style="border-left:4px solid black;" colspan="2">S1(B, C)</th>
       </tr>
     </thead>
     <tbody>
@@ -614,7 +618,6 @@ filters on potentially different join attributes.
     </tbody>
   </table>
 <!--  -->
-</table>
   <!-- <table style="display:inline-block; vertical-align:top; text-align:center; border-collapse:collapse;"> -->
   <table style="display:inline-block; margin: 0 20px; vertical-align:top; text-align:center; border-collapse:collapse;">
     <thead>
@@ -624,9 +627,9 @@ filters on potentially different join attributes.
         <th></th>
       </tr>
       <tr>
-        <th colspan="2">R(A, B)</th>
+        <th colspan="2">R2(A, B)</th>
         <!-- <th style="border-left:4px solid black;"></th> -->
-        <th style="border-left:4px solid black;" colspan="2">S(B, C)</th>
+        <th style="border-left:4px solid black;" colspan="2">S2(B, C)</th>
       </tr>
     </thead>
     <tbody>
@@ -640,13 +643,39 @@ filters on potentially different join attributes.
         <!-- <td style="border-left:4px solid black;"></td> -->
         <td style="border-left:4px solid black;">3</td><td>4</td>
       </tr>
+      <tr>
+      <td colspan="2">↓</td><td colspan="2">↓</td>
+      </tr>
+      <tr>
+      <td colspan="2">$BF_{R2}$</td><td colspan="2">$BF_{S2}$</td>
+      </tr>
     </tbody>
   </table>
 </div>
 
+[Accelerated Predicate Transfer](https://dl.acm.org/doi/10.1145/3725259)
+presents a group of heuristics to balance the workload by shipping the 
+Bloom filters and the partioned tables across the network.
+
+For example, if we ship $BF_{R1}$ to node 2 and $BF_{R2}$ to node 1, 
+the Bloom filter of $R$ can be reconstructed locally at either node 
+by bitwise-OR operations, $BF_R = BF_{R1} | BF_{R2}$.
+This reconstructed filter facilitates the execution of
+$S \tilde{\ltimes} R$ as
+$(S1 \tilde{\ltimes} BF_R) \cup (S2 \tilde{\ltimes} BF_R)$.
+
+Like [Mullin's](https://ieeexplore.ieee.org/document/52778) early-termination,
+some unnecessary Predicate Transfer opearations are also pruned if they
+involve probing a foreign key against a prime key, which guarantees NOT
+to filter out anything.
 
 
+## In what order to perform those semi-joins?
 
-## What's next? (2026)
+As this question remains widely open, [we](https://arxiv.org/pdf/2509.14144) repurpose the classic
+[Maximum Cardinality Search (MCS) algorithm](https://epubs.siam.org/doi/10.1137/0213035)
+for building a shallowest (join) tree that branches wide.
 
+<img style='height: 85%; width: 85%; object-fit: contain' src="{{site.baseurl}}/assets/img/20260116_distributed_joins/mcs.png">
 
+Now we are trying to understand how much this tree benefits the semi-joins, the parallelism and reduces the network cost of shipping filters/tables around, if any.
