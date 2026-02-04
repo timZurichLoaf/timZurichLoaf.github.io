@@ -464,13 +464,19 @@ the scheme (a) relies uses the order for semi-joins and the reversed
 order for joins. The scheme (b) has the flexibility of adopting a
 different order when the user executes the final join.
 
-## Predict Transfer for Distributed Joins (2025)
+## Predict Transfer for Distributed Joins
 
-Joins are not always on the same attribute.
-Say we want to join the following three table $R(A, B) \bowtie S(B, C) \bowtie T(C)$.
+Joins are not always on the same attribute,
+like the running example of 3-table join $R(A, B) \bowtie S(B, C) \bowtie T(C)$, where the local bitwise-AND operations
+are not enough.
 
-A left-to-right pass of semi-joins $S := S \ltimes R$ and 
-$T := T \ltimes S$ trims away $(3, 4)$ from $S(B, C)$.
+[Predicate Transfer](https://www.cidrdb.org/cidr2024/papers/p22-yang.pdf) extends the Bloom-filter-powered approximate semi-joins to different attributes across multiple tables.
+For example, when we consider a left-to-right pass of semi-joins $S := S \ltimes R$, 
+$T := T \ltimes S$ and assume no false positive. 
+What happens behind the scene is a Bloom filter on $R(B)$
+being shipped to $S(B, C)$ to filter out <del>$(3, 4)$</del> and
+another Bloom filter on the filtered $S(C)$ being shipped to
+$T(C)$ to filter out <del>$(5)$</del>.
 
 <div style="text-align: center; white-space: nowrap;">
 
@@ -512,14 +518,15 @@ $T := T \ltimes S$ trims away $(3, 4)$ from $S(B, C)$.
 <table style="display:inline-block; vertical-align:top; text-align:center;">
   <tr><th>T(C)</th></tr>
   <tr><td>3</td></tr>
+  <tr><td style="text-decoration: line-through;">5</td></tr>
 </table>
-
 </div>
 
-A right-to-left pass
+A right-to-left pass semi-joins $S := S \ltimes T$ and 
+$R := R \ltimes S$ further filters out <del>$(1, 2)$</del> from $S(B, C)$
+and <del>$(4, 5)$</del> from $R(A, B)$.
 
 <div style="text-align: center; white-space: nowrap;">
-
 <table style="display:inline-block; vertical-align:top; text-align:center; margin-right:10px;">
   <thead>
     <tr>
@@ -564,9 +571,79 @@ A right-to-left pass
 <table style="display:inline-block; vertical-align:top; text-align:center;">
   <tr><th>T(C)</th></tr>
   <tr><td>3</td></tr>
+  <tr><td style="text-decoration: line-through;">5</td></tr>
 </table>
-
 </div>
+
+Each table (node) receives some incoming filters on join attributes
+to filter out its redundant tuples and generates some outgoing
+filters on potentially different join attributes.
+
+<div style="text-align: center;">
+  <!-- <table style="display:inline-block; vertical-align:top; text-align:center; border-collapse:collapse;"> -->
+  <table style="display:inline-block; margin: 0 20px; vertical-align:top; text-align:center; border-collapse:collapse;">
+    <thead>
+    <tr>
+        <th></th>
+        <th colspan="2">node 1</th>
+        <th></th>
+      </tr>
+      <tr>
+        <th colspan="2">$R_1(A, B)$</th>
+        <!-- <th style="border-left:4px solid black;"></th> -->
+        <th style="border-left:4px solid black;" colspan="2">$S_1(B, C)$</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>1</td><td>1</td>
+        <!-- <td style="border-left:4px solid black;"></td> -->
+        <td style="border-left:4px solid black;">1</td><td>3</td>
+      </tr>
+      <tr>
+        <td>2</td><td>1</td>
+        <!-- <td style="border-left:4px solid black;"></td> -->
+        <td style="border-left:4px solid black;">1</td><td>2</td>
+      </tr>
+      <tr>
+      <td colspan="2">↓</td><td colspan="2">↓</td>
+      </tr>
+      <tr>
+      <td colspan="2">$BF_{R1}$</td><td colspan="2">$BF_{S1}$</td>
+      </tr>
+    </tbody>
+  </table>
+<!--  -->
+</table>
+  <!-- <table style="display:inline-block; vertical-align:top; text-align:center; border-collapse:collapse;"> -->
+  <table style="display:inline-block; margin: 0 20px; vertical-align:top; text-align:center; border-collapse:collapse;">
+    <thead>
+    <tr>
+        <th></th>
+        <th colspan="2">node 2</th>
+        <th></th>
+      </tr>
+      <tr>
+        <th colspan="2">R(A, B)</th>
+        <!-- <th style="border-left:4px solid black;"></th> -->
+        <th style="border-left:4px solid black;" colspan="2">S(B, C)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>3</td><td>2</td>
+        <!-- <td style="border-left:4px solid black;"></td> -->
+        <td style="border-left:4px solid black;">2</td><td>3</td>
+      </tr>
+      <tr>
+        <td>4</td><td>2</td>
+        <!-- <td style="border-left:4px solid black;"></td> -->
+        <td style="border-left:4px solid black;">3</td><td>4</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
 
 
 
