@@ -442,11 +442,13 @@ that contains the information about the tuples apearing in **both** tables
 and can be passed it on to the third table.
 
 [Ramesh](http://link.springer.com/10.1007/978-3-540-89737-8_15) sees two ways to refine the approximate semi-joins in 
-a master-slaves (or user-sites) distributed database such as the one below, where $\text{Site}_k$ stores table $T_k$; $BF_{i\, j\, k}$ is
-a Bloom filter refined by $T_i$, $T_j$, $T_k$; $RS_{i\, j\, k}$ is
+a master-slaves (or user-sites) distributed database such as the one below, where $\text{Site}_k$ stores table $T_k$; $BF_{ijk}$ is
+a Bloom filter refined by $T_i$, $T_j$, $T_k$; $RS_{ijk}$ is
 the join result of $T_i$, $T_j$, $T_k$.
 
+<div style="text-align: center;">
 <img style='height: 85%; width: 85%; object-fit: contain' src="{{site.baseurl}}/assets/img/20260116_distributed_joins/ramesh_2008.png">
+</div>
 
 The scheme (a) refines the Bloom filters in one pass from $\text{Site}_1$, $\text{Site}_2$ to $\text{Site}_N$ in a cascading manner.
 It then incrementally computes the join result in a reversed pass from $\text{Site}_N$ back to $\text{Site}_1$ before returning
@@ -676,6 +678,8 @@ As this question remains widely open, [we](https://arxiv.org/pdf/2509.14144) rep
 [Maximum Cardinality Search (MCS) algorithm](https://epubs.siam.org/doi/10.1137/0213035)
 for building a shallowest (join) tree that branches wide.
 
+<div style="text-align: center;">
 <img style='height: 85%; width: 85%; object-fit: contain' src="{{site.baseurl}}/assets/img/20260116_distributed_joins/mcs.png">
+</div>
 
 Now we are trying to understand how much this tree benefits the semi-joins, the parallelism and reduces the network cost of shipping filters/tables around, if any.
