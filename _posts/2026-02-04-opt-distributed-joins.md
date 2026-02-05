@@ -45,7 +45,7 @@ For the 3-table join $R(A, B) \bowtie S(B, C) \bowtie T(C)$, there is a decision
 $R(A, B) \bowtie S(B, C)$ creates a big intermediate result of 8 tuples below, 
 where only 2 highlighted 
 in red eventually survive in the final join result.
-The steep network cost of transmitting the redundant makes it 
+The steep network cost of transmitting the redundancy makes it 
 even more undesirable in a distributed setting.
 
 <div style="text-align: center;">
@@ -102,7 +102,7 @@ Is there a way to cut down the network cost?
 
 ## Exact Semi-joins
 
-A semi-join $R \ltimes S$ keeps only the tuples in $R$ who also appear in $S$. Say we have two single-column tables $R(A)$ and $S(A)$.
+A semi-join $R \ltimes S$ keeps only the tuples in $R$ that also appear in $S$. Say we have two single-column tables $R(A)$ and $S(A)$.
 
 <div style="text-align: center;">
 <table style="display:inline-block; margin-right:40px;vertical-align:top; text-align:center;">
@@ -171,7 +171,7 @@ Take the 3-table join $R(A, B) \bowtie S(B, C) \bowtie T(C)$ as an example again
 
 The semi-join $S \ltimes T$ finds it enough to only consider the tuple $(1, 3)$ in $S(B, C)$.
 Another semi-join $R \ltimes S$ finds $(1, 1)$ and $(2, 1)$ in $R(A, B)$.
-$T \ltimes S$ finds $(3)$ is $T(C)$.
+$T \ltimes S$ finds $(3)$ in $T(C)$.
 After pruning, we only need to consider the highlighted tuples while executing the 3-table join.
 
 
@@ -187,7 +187,7 @@ A semi-join is a batch of membership queries.
 
 [Bloom filter](https://dl.acm.org/doi/10.1145/362686.362692) is a space-efficient probabilistic data structure for fast membership queries.
 
-Two key components of a Bloom filter are bit array and hash function.
+Two key components of a Bloom filter are a bit array and some hash functions.
 Say we start with a bit array of size $10$ and $2$ hash functions,
 
 $$h_1(x) = x \bmod 10;\quad h_2(x) = (x + 4) \bmod 10.$$
@@ -251,11 +251,11 @@ So it sets a bit to $1$ with a probability of $P_{1} = \frac{1}{m}$
 and leaves a bit unchanged with $P_{0} = 1 - \frac{1}{m}$.
 
 Assuming $k$ independent hash functions of a Bloom filter,
-the probability of some bit remains $0$ after inserting an element is
+the probability that a bit remains $0$ after inserting an element is
 
 $$P_{0}^k = (1 - \frac{1}{m})^k.$$
 
-After inserting all $n$ elements, the probability of some bit remains $0$ is
+After inserting all $n$ elements, the probability that a bit remains $0$ is
 
 $$P_{0}^{k \cdot n} = (1 - \frac{1}{m})^{k \cdot n}.$$
 
@@ -357,7 +357,7 @@ that does **NOT** filter out a single tuple from $S$.
 
 His solution is to partition one big Bloom filter into multiple smaller ones,
 send them one-by-one over the network and terminate this approximate semi-join between two nodes (supposedly hosting two tables) once
-a small partitioned filter fails in filtering out **many enough** irrelevant tuples.
+a small partitioned filter fails to filter out **enough** irrelevant tuples.
 
 How many is enough? A rule of thumb is that 
 the size of irrelevant tuples needs to outweigh that of the partitioned
@@ -409,9 +409,9 @@ drastically reducing the number of disk seeks required for read operations.  -->
 ## Refining Approximate Semi-joins
 
 Network is costly, while local computation is cheap. 
-Upon receing a Bloom filter from the previous node, 
+Upon receiving a Bloom filter from the previous node, 
 the current node can refine that filter locally with a cheap bitwise AND operations 
-and pass on the refined to the next node.
+and pass on the refined filter to the next node.
 
 Say we are joining three single-column tables, the first one with two tuples $1, 2$ and the second one with $2, 3$.
 
@@ -436,7 +436,7 @@ Local bitwise AND gives us the refined filter:
 |------:|---|---|---|---|---|---|---|---|---|---|
 | Bit   | 0 | 0 | <span style="color:red">1</span> | 0 | 0 | 0 | <span style="color:red">1</span> | 0 | 0 | 0 |
 
-It contains the information of the tuples apearing in **both** tables
+It contains the information of the tuples appearing in **both** tables
 and can be passed on to the third table.
 
 [Ramesh](http://link.springer.com/10.1007/978-3-540-89737-8_15) sees two ways to refine the approximate semi-joins in 
@@ -465,7 +465,7 @@ order for computing joins incrementally.
 The scheme (b) has the flexibility of adopting a totally
 different order when the user executes the final joins.
 
-## Predict Transfer for Distributed Joins
+## Predicate Transfer for Distributed Joins
 
 Joins are not always on the same attribute,
 like the running example of 3-table join $R(A, B) \bowtie S(B, C) \bowtie T(C)$, where the local bitwise-AND operations
@@ -667,7 +667,7 @@ This reconstructed filter facilitates the execution of
 $S \tilde{\ltimes} R$ as
 $(S1 \tilde{\ltimes} BF_R) \cup (S2 \tilde{\ltimes} BF_R)$.
 
-Some unnecessary Predicate Transfer opearations are pruned if they
+Some unnecessary Predicate Transfer operations are pruned if they
 involve probing a foreign key against a prime key, which guarantees NOT
 to filter out anything.
 
