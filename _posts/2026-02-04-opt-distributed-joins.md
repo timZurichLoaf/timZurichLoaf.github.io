@@ -442,19 +442,19 @@ that contains the information about the tuples apearing in **both** tables
 and can be passed it on to the third table.
 
 [Ramesh](http://link.springer.com/10.1007/978-3-540-89737-8_15) sees two ways to refine the approximate semi-joins in 
-a master-slaves (or user-sites) distributed database such as the one below, where $\text{Site}_k$ stores table $T_k$; $BF_{ijk}$ is
-a Bloom filter refined by $T_i$, $T_j$, $T_k$; $RS_{ijk}$ is
+a master-slaves (or user-sites) distributed database such as the one below, where $Site_k$ stores table $T_k$; $BF_{i,j,k}$ is
+a Bloom filter refined by $T_i$, $T_j$, $T_k$; $RS_{i,j,k}$ is
 the join result of $T_i$, $T_j$, $T_k$.
 
 <div style="text-align: center;">
 <img style='height: 85%; width: 85%; object-fit: contain' src="{{site.baseurl}}/assets/img/20260116_distributed_joins/ramesh_2008.png">
 </div>
 
-The scheme (a) refines the Bloom filters in one pass from $\text{Site}_1$, $\text{Site}_2$ to $\text{Site}_N$ in a cascading manner.
-It then incrementally computes the join result in a reversed pass from $\text{Site}_N$ back to $\text{Site}_1$ before returning
+The scheme (a) refines the Bloom filters in one pass from $Site_1$, $Site_2$ to $Site_N$ in a cascading manner.
+It then incrementally computes the join result in a reversed pass from $Site_N$ back to $Site_1$ before returning
 the final join result to the user.
 
-The scheme (b) refines the Bloom filters in two passes, first left-to-right from $\text{Site}_1$, $\text{Site}_2$ to $\text{Site}_N$ 
+The scheme (b) refines the Bloom filters in two passes, first left-to-right from $Site_1$, $Site_2$ to $Site_N$ 
 and then right-to-left. 
 Each site then uses the highly refined filter at hand to return 
 a pruned table to the user who eventually computes the final join result.
