@@ -678,8 +678,25 @@ As this question remains widely open, [we](https://arxiv.org/pdf/2509.14144) rep
 [Maximum Cardinality Search (MCS) algorithm](https://epubs.siam.org/doi/10.1137/0213035)
 for building a shallowest (join) tree that branches wide.
 
+```sql
+SELECT ...
+FROM keyword AS k,
+     movie_info AS mi,
+     movie_keyword AS mk,
+     title AS t
+WHERE ...
+  AND t.id = mi.movie_id
+  AND t.id = mk.movie_id
+  AND mk.movie_id = mi.movie_id
+  AND k.id = mk.keyword_id;
+```
+
+For example, given the query of [Join Order Benchmark 3a](https://github.com/gregrahn/join-order-benchmark/blob/master/3a.sql) above,
+we get the join tree below.
+
 <div style="text-align: center;">
 <img style='height: 85%; width: 85%; object-fit: contain' src="{{site.baseurl}}/assets/img/20260116_distributed_joins/mcs.png">
 </div>
 
-Now we are trying to understand how much this tree benefits the semi-joins, the parallelism and reduces the network cost of shipping filters/tables around, if any.
+
+Now we are trying to understand how much this tree benefits the (approximate) semi-joins / predicate transfer, the parallelism and reduces the network cost of shipping filters/tables around, if any.
