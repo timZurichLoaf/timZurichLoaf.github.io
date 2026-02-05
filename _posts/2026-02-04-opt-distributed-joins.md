@@ -4,7 +4,7 @@ title: "Optimization of Distributed Joins"
 ---
 
 ## Challenges of Joins
-When we join the following three table $R(A, B) \bowtie S(B, C) \bowtie T(C)$, there is a decision to make about which two to join first.
+For the 3-table join $R(A, B) \bowtie S(B, C) \bowtie T(C)$, there is a decision to make about which two of them to join first.
 
 <div style="text-align: center;">
 <table style="display:inline-block; margin-right:40px; vertical-align:top; text-align:center;">
@@ -42,10 +42,11 @@ When we join the following three table $R(A, B) \bowtie S(B, C) \bowtie T(C)$, t
 </table>
 </div>
 
-$R(A, B) \bowtie S(B, C)$ creates in the big intermediate result below, where only two tuples highlighted 
-in red eventually appear in the final join result.
-It is even more undesirable in a distributed setting, because
-of the steep network cost to transmit the redundant.
+$R(A, B) \bowtie S(B, C)$ creates a big intermediate result of 8 tuples below, 
+where only 2 highlighted 
+in red eventually survive in the final join result.
+The steep network cost of transmitting the redundant makes it 
+even more undesirable in a distributed setting.
 
 <div style="text-align: center;">
 <table style="display:inline-block; margin-right:40px; vertical-align:top; text-align:center;">
@@ -91,16 +92,13 @@ of the steep network cost to transmit the redundant.
 </table>
 </div>
 
-An alternative choice to process $R(A, B) \bowtie S(B, C)$
-first is arguably better, as it leaves the only tuple that
+An alternative choice to process $S(B, C) \bowtie T(C)$
+first is better, as it leaves only 1 tuple that
 contributes to the final join result.
 
-
-
-
 Assuming each table is stored on a different node,
-we still need to ship many redundant tuples to facilitate that join.
-Is there a way to avoid or at least cut down the redundant network cost?
+we still need to ship many redundant tuples to execute $S(B, C) \bowtie T(C)$.
+Is there a way to cut down the network cost?
 
 ## Exact Semi-joins
 
@@ -172,12 +170,13 @@ Take the 3-table join $R(A, B) \bowtie S(B, C) \bowtie T(C)$ as an example again
 
 
 The semi-join $S \ltimes T$ finds it enough to only consider the tuple $(1, 3)$ in $S(B, C)$.
-The other semi-join $R \ltimes S$ finds $(1, 1)$ and $(2, 1)$ in $R(A, B)$.
+Another semi-join $R \ltimes S$ finds $(1, 1)$ and $(2, 1)$ in $R(A, B)$.
+$T \ltimes S$ finds $(3)$ is $T(C)$.
 After pruning, we only need to consider the highlighted tuples while executing the 3-table join.
 
 
 Now the questions are
-1. How to do a semi-join faster & more compactly?
+1. How to run semi-joins faster & more compactly?
 2. In what order to perform those semi-joins?
 
 
@@ -264,7 +263,7 @@ Then the probability of a bit being set to $1$ is
 
 $$P_{set} = 1 - P_{0}^{k \cdot n} = 1 - (1 - \frac{1}{m})^{k \cdot n}.$$
 
-The query of an element that's never been inserted returns **false positives** if any of the $k$ bits it's hashed to has
+The query of an element that's never been inserted returns **false positives** if **all** of the $k$ bits it's hashed to have
 been set to $1$. It gives us the **false-positive** rate, a.k.a.
 the **error** rate,
 
@@ -275,7 +274,7 @@ we have
 
 $$P_e \approx [1 - e^\frac{-k\cdot n}{m}]^{k}.$$
 
-Given the number of elements $n$ and that of hash functions $k$,
+Given $n$ inserted elements and $k$ hash functions,
 increasing the filter size $m$ reduces the false positive rate $P_e$.
 
 ***Optimal Setup***
@@ -310,7 +309,7 @@ so it doesn't prune too hard to exclude any legit tuple from the final join resu
 
 For the 3-table join above, if we were using a Bloom filter built on $T(C)$ 
 to do an **approximate semi-join** $\tilde{\ltimes}$ that filters out **some** irrelevant 
-tuples from $S(B, C)$ but leaving a false-positive $\color{orange}(1, 4)$, 
+tuples from $S(B, C)$ but leaving some false-positives, say $\color{orange}(1, 4)$, 
 the final join would remain correct.
 
 <div style="text-align: center;">
@@ -353,7 +352,7 @@ the final join would remain correct.
 
 
 [Mullin](https://ieeexplore.ieee.org/document/52778)
-notices that some (approximate) semi-joins are totally unnecessary, like $S \tilde{\ltimes} R$
+notices that some (approximate) semi-joins are totally unnecessary, like in our 3-table join $S \tilde{\ltimes} R$
 that does **NOT** filter out a single tuple from $S$.
 
 His solution is to partition one big Bloom filter into multiple smaller ones,
@@ -371,8 +370,8 @@ and $n$ elements inserted is
 
 $$P_e = [1 - (1 - \frac{1}{m})^{k\cdot n}]^{k}.$$
 
-If we were using $k$ partitioned Bloom filters of smaller size $m' < m$ each with 
-**only one** hash function, the error rate would be
+If we were using $k$ partitioned Bloom filters of smaller size $m'$ each with 
+**only 1** hash function, the error rate would be
 
 $$P'_e = [1 - (1 - \frac{1}{m'})^{n}]^{k}.$$
 
@@ -416,10 +415,9 @@ and pass on the refined to the next node.
 
 Say we are joining three single-column tables, the first one with two tuples $1, 2$ and the second one with $2, 3$.
 
-The two hash functions
-$$h_1(x) = x \bmod 10;\quad h_2(x) = (x + 4) \bmod 10$$
-
-would give us the Bloom filters below
+The two hash functions,
+$h_1(x) = x \bmod 10$ and $h_2(x) = (x + 4) \bmod 10$,
+would give us the Bloom filters below:
 
 {:class="table table-bordered table-hover table-sm"}
 | BF1   | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 |
@@ -431,20 +429,21 @@ would give us the Bloom filters below
 |------:|---|---|---|---|---|---|---|---|---|---|
 | Bit   | 0 | 0 | <span style="color:red">1</span> | <span style="color:red">1</span> | 0 | 0 | <span style="color:red">1</span> | <span style="color:red">1</span> | 0 | 0 |
 
-Local bitwise AND gives us the refined filter as
+Local bitwise AND gives us the refined filter:
 
 {:class="table table-bordered table-hover table-sm"}
 | BF1&2 | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 |
 |------:|---|---|---|---|---|---|---|---|---|---|
 | Bit   | 0 | 0 | <span style="color:red">1</span> | 0 | 0 | 0 | <span style="color:red">1</span> | 0 | 0 | 0 |
 
-that contains the information about the tuples apearing in **both** tables
-and can be passed it on to the third table.
+It contains the information of the tuples apearing in **both** tables
+and can be passed on to the third table.
 
 [Ramesh](http://link.springer.com/10.1007/978-3-540-89737-8_15) sees two ways to refine the approximate semi-joins in 
-a master-slaves (or user-sites) distributed database such as the one below, where $Site_k$ stores table $T_k$; $BF_{i,j,k}$ is
-a Bloom filter refined by $T_i$, $T_j$, $T_k$; $RS_{i,j,k}$ is
-the join result of $T_i$, $T_j$, $T_k$.
+a master-slaves (or user-sites) distributed database such as the one below, where 
+- $Site_k$ stores table $T_k$;
+- $BF_{i,j,k}$ is a Bloom filter refined by $T_i$, $T_j$, $T_k$;
+- $RS_{i,j,k}$ is the (pruned) join result of $T_i$, $T_j$, $T_k$.
 
 <div style="text-align: center;">
 <img style='height: 85%; width: 85%; object-fit: contain' src="{{site.baseurl}}/assets/img/20260116_distributed_joins/ramesh_2008.png">
@@ -459,12 +458,12 @@ and then right-to-left.
 Each site then uses the highly refined filter at hand to return 
 a pruned table to the user who eventually computes the final join result.
 
-The network cost overweighs the local computation, therefore 
-determining the order of those approximate semi-joins.
-Because of the incremental computation of join result, 
-the scheme (a) relies uses the order for semi-joins and the reversed 
-order for joins. The scheme (b) has the flexibility of adopting a
-different order when the user executes the final join.
+The network cost is the main concern when we 
+determine the order of those approximate semi-joins.
+The scheme (a) uses that order for semi-joins and the (reversed) same
+order for computing joins incrementally. 
+The scheme (b) has the flexibility of adopting a totally
+different order when the user executes the final joins.
 
 ## Predict Transfer for Distributed Joins
 
@@ -474,10 +473,10 @@ are not enough.
 
 [Predicate Transfer](https://www.cidrdb.org/cidr2024/papers/p22-yang.pdf) extends the Bloom-filter-powered approximate semi-joins to different attributes across multiple tables.
 For example, when we consider a left-to-right pass $S := S \tilde{\ltimes} R$, 
-$T := T \tilde{\ltimes} S$ and assume no false positive. 
+$T := T \tilde{\ltimes} S$ (and assume no false positive). 
 A Bloom filter on $R(B)$ is shipped behind the scene 
 to $S(B, C)$ to filter out <del>$(3, 4)$</del> and
-another Bloom filter on the filtered $S(C)$ to
+another Bloom filter on the pruned $S(C)$ to
 $T(C)$ to filter out <del>$(5)$</del>.
 
 <div style="text-align: center; white-space: nowrap;">
@@ -577,9 +576,11 @@ and <del>$(4, 5)$</del> from $R(A, B)$.
 </table>
 </div>
 
-During a pass, each table (node) receives some incoming filters on join attributes
-to filter out its redundant tuples and generates some outgoing
-filters on potentially different join attributes.
+During a pass, each table (node) receives an incoming filter on a join attribute
+(it has in common with the previous table)
+to filter out its redundant tuples and generates an outgoing
+filter on a potentially different join attribute
+(it has in common with the next table).
 
 In the distributed database below, two partions $R1$ and $R2$ of $R(A, B)$
 are stored on node $1$ and $2$ respectively. So are those of $S(B, C)$.
@@ -660,14 +661,13 @@ presents a group of heuristics to balance the workload by shipping the
 Bloom filters and the partioned tables across the network.
 
 For example, if we ship $BF_{R1}$ to node 2 and $BF_{R2}$ to node 1, 
-the Bloom filter of $R$ can be reconstructed locally at either node 
+the Bloom filter of $R(A, B)$ can be reconstructed locally at either node 
 by bitwise-OR operations, $BF_R = BF_{R1} | BF_{R2}$.
 This reconstructed filter facilitates the execution of
 $S \tilde{\ltimes} R$ as
 $(S1 \tilde{\ltimes} BF_R) \cup (S2 \tilde{\ltimes} BF_R)$.
 
-Like [Mullin's](https://ieeexplore.ieee.org/document/52778) early-termination,
-some unnecessary Predicate Transfer opearations are also pruned if they
+Some unnecessary Predicate Transfer opearations are pruned if they
 involve probing a foreign key against a prime key, which guarantees NOT
 to filter out anything.
 
@@ -676,7 +676,7 @@ to filter out anything.
 
 As this question remains widely open, [we](https://arxiv.org/pdf/2509.14144) repurpose the classic
 [Maximum Cardinality Search (MCS) algorithm](https://epubs.siam.org/doi/10.1137/0213035)
-for building a shallowest (join) tree that branches wide.
+for building a **shallowest** (join) tree that branches wide.
 
 ```sql
 SELECT ...
@@ -699,4 +699,4 @@ we get the join tree below.
 </div>
 
 
-Now we are trying to understand how much this tree benefits the (approximate) semi-joins / predicate transfer, the parallelism and reduces the network cost of shipping filters/tables around, if any.
+Now we are trying to understand how much this **shallow** and **wide** tree benefits the (approximate) semi-joins / predicate transfer, the parallelism and reduces the network cost of shipping filters/tables around, if any.
