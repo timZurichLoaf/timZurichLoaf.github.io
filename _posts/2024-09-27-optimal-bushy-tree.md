@@ -21,7 +21,7 @@ $$R_1 - R_2 - R_3 - R_4$$
 In addition to the chain, we have also,
 - Cycle Queries, such as $R = R_1(a, b), R_2(b, c), R_3(c, a)$
 - Clique Queries, such as $R = R_1(a), R_2(a), R_3(a), R_4(a)$
-- Star Queries, such as $R = R_1(a, b), R_2(a, b), R_3(a, c)$
+- Star Queries, such as $R = R_1(a, b, c), R_2(a, d), R_3(b, e), R_4(c, f)$
 
 ## Graph to Join Tree the Old Way
 
