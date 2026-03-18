@@ -5,7 +5,7 @@ featured:
   name: 'Algorithms for Optimizing Acyclic Queries', 
   authors : '<strong>Luo, Zheng</strong> and Van den Broeck, Wim and Van den Broeck, Guy and Wang, Yisu Remy', 
   venue : '29th International Conference on Database Theory (ICDT2026), Tampere, Finland', 
-  url: 'https://arxiv.org/pdf/2509.14144'}
+  url: 'https://drops.dagstuhl.de/storage/00lipics/lipics-vol365-icdt2026/LIPIcs.ICDT.2026.17/LIPIcs.ICDT.2026.17.pdf'}
 - {
   name: 'Tractable Conjunctive Queries over Static and Dynamic Relations',
   authors : 'Kara, Ahmet and <strong>Luo, Zheng</strong> and Nikolic, Milos and Olteanu, Dan and Zhang, Haozhe',
