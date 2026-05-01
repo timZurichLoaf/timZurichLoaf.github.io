@@ -14,6 +14,7 @@ plugins:
   - jekyll-seo-tag
 exclude:
   - archive_posts
+  - CHANGELOG.md
 defaults:
   - scope:
       path: "assets"
